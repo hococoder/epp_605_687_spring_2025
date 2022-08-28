@@ -1,0 +1,133 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week06/05-MakingCustomControlsWithCoreGraphics"/><meta name="twitter:url" content="https://hococoder.com/posts/Week06/05-MakingCustomControlsWithCoreGraphics"/><meta name="og:url" content="https://hococoder.com/posts/Week06/05-MakingCustomControlsWithCoreGraphics"/><title>Week 6 - Making Custom Controls with Core Graphics | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 6 - Making Custom Controls with Core Graphics | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 6 - Making Custom Controls with Core Graphics | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 6 - Making Custom Controls with Core Graphics</h1><p style="float: left">Previous:  <A HREF="../04-MakingCustomControlsWithSwiftUI/index.html">Making Custom Controls with SwiftUI</A></p><p style="float: right">Next:  <A HREF="../06-IntroductionToSwiftUICharts/index.html" class="nextModule">Introduction to SwiftUI Charts</A></p><BR/><BR/><h2>CoreGraphics</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_ch51quqk?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_ch51quqk&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Every UIView from UIKit has a <code>draw(_ rect:)</code> method that can be implemented (but NEVER called by you directly!) to draw a custom view. <code>draw(_ rect:)</code> should only handle the rendering of your view - never use it for handling user interactions or other long running processes.</p><p>In the <code>draw(_ rect:)</code> method, you use the <code>CoreGraphics</code> library to take care of drawing. It is based on the Quartz rendering engine, providing low-level lightweight 2D rendering. You can draw paths, perform transformations, manage colors, perform offscreen rendering, draw patterns, gradients, shading, and a lot more!</p><p><code>CoreGraphics</code> is somewhat different from the other libraries in iOS (well, ones in UIKit, that is). It uses structs heavily - <code>CGPoint</code>, <code>CGSize</code>, and <code>CGRect</code>, among others. You see a lot more casting (float to <code>CGFloat</code>, for example) than usual, although that has gotten better over the years. Until recently <code>CoreGraphics</code> was invoked with “C” style functions, but have a much more object oriented, Swift like style now.</p><p>To draw something, you first need to get a reference to a <code>CGContext</code>. This class represents the a Quartz 2D drawing destination, and acts like scratch space, similar to <code>CIContext</code> from <code>CoreImage</code>. It contains parameters for drawing (such as stroke color and size), and device specific information. You can render that context to a window, an image, a PDF, or even a printer. You can call <code>UIGraphicsGetCurrentContext()</code> to get an instance to use in your <code>draw(_ rect:)</code> method.</p><p>A <code>CGPath</code> represents a mathematical representation of a line or shape to draw. You can make these by hand, but most of the time you will end up using a convenience method in <code>CoreGraphics</code> to calculate the path for you - lines, rectangles, ellipses, arcs and other curves are all available.</p><h2>Example</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_uo5a99so?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_uo5a99so&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Let's continue on with the last example, and add an example that is created using <code>CoreGraphics</code> calls. Start by defining a <code>UIViewRepresentable</code> view that will let us display this in SwiftUI - this should seem familiar by now.</p><pre><code><span class="keyword">struct</span> CustomBubbleViewRep: <span class="type">UIViewRepresentable</span> {
+  
+  <span class="keyword">@Binding var</span> frameSize: <span class="type">CGRect</span>
+  <span class="keyword">@Binding var</span> percentage: <span class="type">Double</span>
+  
+  <span class="keyword">init</span>(frameSize: <span class="type">Binding</span>&lt;<span class="type">CGRect</span>&gt;, percentage: <span class="type">Binding</span>&lt;<span class="type">Double</span>&gt;) {
+    _frameSize = frameSize
+    _percentage = percentage
+  }
+  
+  <span class="keyword">func</span> makeUIView(context: <span class="type">Context</span>) -&gt; <span class="type">CustomBubbleView</span> {
+    <span class="type">CustomBubbleView</span>(frameSize: <span class="property">$frameSize</span>, percentage: <span class="property">$percentage</span>)
+  }
+  
+  <span class="keyword">func</span> updateUIView(<span class="keyword">_</span> uiView: <span class="type">CustomBubbleView</span>, context: <span class="type">Context</span>) {
+    uiView.<span class="property">percentageComplete</span> = percentage
+    uiView.<span class="call">setNeedsDisplay</span>()
+  }
+}
+</code></pre><p>The view we are going to make will consist of 3 parts. An outer ring, an inner ring, and a “filled” portion of the bubble. Start by defining our <code>UIView</code>, and setting up various properties such as the radius, starting and stopping angles, and various colors.</p><pre><code><span class="keyword">class</span> CustomBubbleView: <span class="type">UIView</span> {
+  
+  <span class="keyword">var</span> ctx:<span class="type">CGContext</span>!
+  <span class="keyword">var</span> bubbleCenter:<span class="type">CGPoint</span>!
+  <span class="keyword">var</span> radius: <span class="type">CGFloat</span>!
+  <span class="keyword">var</span> startingAngle: <span class="type">CGFloat</span>!
+  <span class="keyword">var</span> endingAngle: <span class="type">CGFloat</span>!
+  <span class="keyword">var</span> percentageComplete: <span class="type">Double</span>
+  <span class="keyword">var</span> outerBubbleRadius: <span class="type">CGFloat</span> = <span class="number">70.0</span>
+  <span class="keyword">var</span> bgColor: <span class="type">UIColor</span> = <span class="type">UIColor</span>(white:<span class="number">0.16</span>, alpha:<span class="number">1.0</span>)
+  <span class="keyword">var</span> circleBgColor: <span class="type">UIColor</span> = <span class="type">UIColor</span>(white:<span class="number">0.16</span>, alpha:<span class="number">1.0</span>)
+  <span class="keyword">var</span> outerRingColor: <span class="type">UIColor</span> = .<span class="dotAccess">purple</span>
+  <span class="keyword">var</span> innerRingColor: <span class="type">UIColor</span> = .<span class="dotAccess">white</span>
+  <span class="keyword">var</span> frameSize: <span class="type">CGRect</span>
+</code></pre><p>Next, make an init method that takes in a <code>CGRect</code> <code>Binding</code>. This is so the GeometryGetter we define later can pass in the rendered size of the view once it gets on screen. It also takes in a percentage so we can fill the inner bubble appropriately. Initialize the starting angle, ending angle, and bubble center in the view.</p><pre><code>   <span class="keyword">init</span>(frameSize: <span class="type">Binding</span>&lt;<span class="type">CGRect</span>&gt;, percentage: <span class="type">Binding</span>&lt;<span class="type">Double</span>&gt;) {
+    <span class="keyword">self</span>.<span class="property">frameSize</span> = frameSize.<span class="property">wrappedValue</span>
+    <span class="keyword">self</span>.<span class="property">percentageComplete</span> = percentage.<span class="property">wrappedValue</span>
+    <span class="keyword">super</span>.<span class="keyword">init</span>(frame: <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">200</span>, height: <span class="number">200</span>))
+    startingAngle = <span class="number">0.0</span>
+    endingAngle = <span class="type">CGFloat</span>(<span class="type">Double</span>.<span class="property">pi</span>*<span class="number">2</span>)
+    bubbleCenter = <span class="type">CGPoint</span>(x: frameSize.<span class="property">wrappedValue</span>.<span class="property">size</span>.<span class="property">width</span> / <span class="number">2</span>, y: frameSize.<span class="property">wrappedValue</span>.<span class="property">size</span>.<span class="property">height</span> / <span class="number">2</span>)
+  }
+  
+  <span class="keyword">required init</span>?(coder: <span class="type">NSCoder</span>) {
+    <span class="call">fatalError</span>(<span class="string">"init(coder:) has not been implemented"</span>)
+  }
+</code></pre><p>Then define the <code>draw(_ rect:)</code> method. We NEVER call this directly - only define the implementation. The OS is responsible for calling this if it needs to re-render the view. Initialize a context to draw in, and reset the bubble center in case the view has been resized since initialization. Then ask the context to set its fill color, fill itself with that color, and set the line width to 3.0. Finally add placeholder calls for adding the outer ring, the inner ring, and the filled bubble.</p><pre><code>   <span class="keyword">override func</span> draw(<span class="keyword">_</span> rect: <span class="type">CGRect</span>)
+  {
+    ctx = <span class="type">UIGraphicsGetCurrentContext</span>()
+    bubbleCenter = <span class="type">CGPoint</span>(x: <span class="keyword">self</span>.<span class="property">frame</span>.<span class="property">size</span>.<span class="property">width</span> / <span class="number">2</span>, y: <span class="keyword">self</span>.<span class="property">frame</span>.<span class="property">size</span>.<span class="property">height</span> / <span class="number">2</span>)
+    
+    ctx!.<span class="call">setFillColor</span>(bgColor.<span class="property">cgColor</span>)
+    ctx!.<span class="call">fill</span>(<span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="keyword">self</span>.<span class="property">frame</span>.<span class="property">size</span>.<span class="property">width</span>, height: <span class="keyword">self</span>.<span class="property">frame</span>.<span class="property">size</span>.<span class="property">height</span>))
+    
+    ctx!.<span class="call">setLineWidth</span>(<span class="type">CGFloat</span>(<span class="number">3.0</span>))
+
+    <span class="call">addOuterRing</span>()
+    
+    <span class="call">addInnerRing</span>()
+    
+    <span class="call">addFilledPercentage</span>()
+  }
+</code></pre><p>The inner and outer rings are very similar. I’ll go through the outer one in detail, and copy and adjust for the inner ring. First set the <code>radius</code> to the <code>outerBubbleRadius</code>, and then set the context’s stroke color to the outer ring color. Then draw an Arc with the context’s <code>addArc</code> method, which takes in the center of the arc, which is the bubble center, the radius, the starting and ending angles, and which direction to draw - in our case clockwise. Finally, ask the context to draw the path using the stroke drawing mode.</p><pre><code>   <span class="keyword">func</span> addOuterRing()
+  {
+    radius = outerBubbleRadius
+    
+    ctx!.<span class="call">setStrokeColor</span>(outerRingColor.<span class="property">cgColor</span>)
+    
+    ctx!.<span class="call">addArc</span>(center: bubbleCenter, radius: radius, startAngle: startingAngle, endAngle: endingAngle, clockwise: <span class="keyword">true</span>)
+    
+    ctx!.<span class="call">drawPath</span>(using: .<span class="dotAccess">stroke</span>);
+  }
+</code></pre><p>The inner ring is similar, with a smaller radius and a different color.</p><pre><code>   <span class="keyword">func</span> addInnerRing()
+  {
+    radius = <span class="number">0.9</span>*radius
+    
+    ctx!.<span class="call">setStrokeColor</span>(innerRingColor.<span class="property">cgColor</span>)
+    
+    ctx!.<span class="call">addArc</span>(center: <span class="type">CGPoint</span>(x: bubbleCenter.<span class="property">x</span>, y: bubbleCenter.<span class="property">y</span>), radius: <span class="type">CGFloat</span>(radius), startAngle: <span class="type">CGFloat</span>(startingAngle), endAngle: <span class="type">CGFloat</span>(endingAngle), clockwise: <span class="keyword">true</span>)
+    
+    ctx!.<span class="call">drawPath</span>(using: .<span class="dotAccess">stroke</span>);
+  }
+</code></pre><p>Next, let’s add a method called <code>addFilledPercentage</code> that will let us fill the circle inside the inner ring by a certain value. The percentage chosen corresponds to a particular set of starting and ending angles used to draw an arc. This time in addition to drawing the path of the arc, we will also fill the path with a light purple color.<br><br>To help calculate the angle for the percentage, make another method called <code>getAngleFor</code>, which takes in a radius and percentage complete value. I’ll add in some code to calculate the starting and ending angles of the arc, and return that tuple to the calling method.</p><pre><code>   <span class="keyword">func</span> addFilledPercentage()
+  {
+    <span class="keyword">let</span> circleRadius = radius - <span class="number">1</span>
+    <span class="keyword">let</span> percentageToAngle = <span class="call">getAngleFor</span>(radius: circleRadius, percentage: percentageComplete)
+    <span class="keyword">let</span> circleStartingAngle = percentageToAngle.<span class="property">startAngle</span>
+    <span class="keyword">let</span> circleEndingAngle = percentageToAngle.<span class="property">endAngle</span>
+    ctx!.<span class="call">addArc</span>(center: bubbleCenter, radius: circleRadius, startAngle: circleStartingAngle, endAngle: circleEndingAngle, clockwise: <span class="keyword">false</span>)
+    ctx!.<span class="call">closePath</span>()
+    ctx!.<span class="call">setFillColor</span>(<span class="type">UIColor</span>(red:<span class="number">0.54</span>, green:<span class="number">0.22</span>, blue:<span class="number">0.88</span>, alpha:<span class="number">1.0</span>).<span class="property">cgColor</span>)
+    ctx?.<span class="call">fillPath</span>()
+  }
+  
+  <span class="keyword">func</span> getAngleFor(radius:<span class="type">CGFloat</span>, percentage:<span class="type">Double</span>) -&gt; (startAngle:<span class="type">CGFloat</span>, endAngle:<span class="type">CGFloat</span>)
+  {
+    <span class="keyword">if</span> percentage &gt;= <span class="number">100.0</span>
+    {
+      <span class="keyword">return</span> (-<span class="type">CGFloat</span>(<span class="type">Double</span>.<span class="property">pi</span>), <span class="type">CGFloat</span>(<span class="number">1.5</span>*<span class="type">Double</span>.<span class="property">pi</span>))
+    }
+    <span class="keyword">let</span> rad:<span class="type">Double</span> = <span class="type">Double</span>(radius)
+    <span class="keyword">let</span> start = <span class="call">asin</span>(((<span class="number">100.0</span>-percentage)*(rad/<span class="number">100</span>)*<span class="number">2</span> - rad)/rad)
+    <span class="keyword">let</span> end = -<span class="call">asin</span>(((<span class="number">100.0</span>-percentage)*(rad/<span class="number">100</span>)*<span class="number">2</span> - rad)/rad)
+    <span class="keyword">return</span> (<span class="type">CGFloat</span>(start), <span class="type">CGFloat</span>(<span class="type">Double</span>.<span class="property">pi</span>) + <span class="type">CGFloat</span>(end))
+  }
+  
+}
+
+<span class="keyword">struct</span> CustomControlsExampleView_Previews: <span class="type">PreviewProvider</span> {
+  <span class="keyword">static var</span> previews: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">CustomControlsExampleView</span>()
+  }
+}
+</code></pre><p>To help provide the size of the view to the CustomBubbleViewRep view make a GeometryGetter class that can provide that value to us</p><pre><code><span class="keyword">struct</span> GeometryGetter: <span class="type">View</span> {
+    <span class="keyword">@Binding var</span> rect: <span class="type">CGRect</span>
+
+    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="type">GeometryReader</span> { (g) -&gt; <span class="type">Path</span> <span class="keyword">in</span>
+            <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> { <span class="comment">// avoids warning: 'Modifying state during view update.' Doesn't look very reliable, but works.</span>
+                <span class="keyword">self</span>.<span class="property">rect</span> = g.<span class="call">frame</span>(in: .<span class="dotAccess">global</span>)
+            }
+            <span class="keyword">return</span> <span class="type">Path</span>() <span class="comment">// could be some other dummy view</span>
+        }
+    }
+}
+</code></pre><p>This struct lets us get the current size of the view that the GeometryGetter is wrapped around. There is no sense of getting the frame's size in SwiftUI like there is in UIKit, so you have to use built in views like this to query the status of the on screen view.</p><p>Add a call to the CustomControlsExampleView struct to add this view to the app</p><pre><code><span class="type">CustomBubbleViewRep</span>(frameSize: <span class="property">$frameSize</span>, percentage: <span class="property">$bubblePercentage</span>).<span class="call">background</span>(<span class="type">GeometryGetter</span>(rect: <span class="property">$frameSize</span>))
+  .<span class="call">padding</span>()
+</code></pre><p>If we run this we see the outer circles, but no percentage filled bubble! That's because it is set to 0 initially and we have no way to increase it. Let's add a SwiftUI <code>Slider</code> control to our main view so we can pass in the percentage complete.</p><pre><code><span class="type">Slider</span>(value: <span class="property">$bubblePercentage</span>, in: <span class="number">0</span>...<span class="number">100</span>, step: <span class="number">1</span>)
+  .<span class="call">padding</span>()
+</code></pre><p>Run this again. Now, with the slider in place, we can adjust the slider to change the percentage of the bubble that has been filled. Here we're using a slider, but you could get more creative by using the duration of a long push to fill the bubble, or let the user slide up or slide down within the bubble to fill it.</p><p style="float: left">Previous:  <A HREF="../04-MakingCustomControlsWithSwiftUI/index.html">Making Custom Controls with SwiftUI</A></p><p style="float: right">Next:  <A HREF="../06-IntroductionToSwiftUICharts/index.html" class="nextModule">Introduction to SwiftUI Charts</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

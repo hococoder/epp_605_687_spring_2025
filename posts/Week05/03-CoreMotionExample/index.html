@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week05/03-CoreMotionExample"/><meta name="twitter:url" content="https://hococoder.com/posts/Week05/03-CoreMotionExample"/><meta name="og:url" content="https://hococoder.com/posts/Week05/03-CoreMotionExample"/><title>Week 5 - Core Motion Example | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 5 - Core Motion Example | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 5 - Core Motion Example | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 5 - Core Motion Example</h1><p style="float: left">Previous:  <A HREF="../02-IntroductionToCoreMotion/index.html">Introduction to Core Motion</A></p><p style="float: right">Next:  <A HREF="../04-MapInSwiftUI/index.html" class="nextModule">Map in SwiftUI</A></p><BR/><BR/><h2>Core Motion in Action</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_9yo596xo?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_9yo596xo&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Let's build a SwiftUI view that displays data from the sensors governed by <code>CoreMotion</code>. To properly show what you can do with <code>CoreMotion</code>, you need to run an app on a device. Therefore, during this example, I’ll be running the app on my iPhone, and I’ll explain how I move the phone so you can replicate it while coding along at home. I'll use Quicktime Player to capture the video from the device and display it in the video. Because you have to run it on device, you can use the preview canvas to look at your layout, but it won't show any values from <code>CoreMotion</code>.</p><p>Start by declaring an <code>Axis</code> enum to represent the X, Y, and Z axes.</p><pre><code><span class="comment">//MARK: - CORE MOTION</span>
+<span class="keyword">enum</span> Axis: <span class="type">String</span> {
+  <span class="keyword">case</span> <span class="type">X</span>
+  <span class="keyword">case</span> <span class="type">Y</span>
+  <span class="keyword">case</span> <span class="type">Z</span>
+}
+</code></pre><p>Then define the <code>MotionManager</code> class. This will adopt <code>ObservableObject</code> so we can monitor changes in it from our view. Recall that an <code>ObservableObject</code> has to have at least one property that is decorated with a <code>@Published</code> property wrapper. In this case we will have a series of things to monitor, including the <code>acceleration</code> object, <code>pitch</code>, <code>rotationRate</code>, and <code>gravity</code> among others.</p><pre><code><span class="keyword">class</span> MotionManager: <span class="type">ObservableObject</span> {
+  
+  <span class="keyword">@Published var</span> acceleration: <span class="type">CMAcceleration</span> = <span class="type">CMAcceleration</span>()
+  <span class="keyword">@Published var</span> pitch: <span class="type">Double</span> = <span class="number">0.0</span>
+  <span class="keyword">@Published var</span> roll: <span class="type">Double</span> = <span class="number">0.0</span>
+  <span class="keyword">@Published var</span> yaw: <span class="type">Double</span> = <span class="number">0.0</span>
+  <span class="keyword">@Published var</span> rotationRate: <span class="type">CMRotationRate</span> = <span class="type">CMRotationRate</span>()
+  <span class="keyword">@Published var</span> gravity: <span class="type">CMAcceleration</span> = <span class="type">CMAcceleration</span>()
+
+</code></pre><p>Initialize a <code>CMMotionManager()</code></p><pre><code>   <span class="keyword">let</span> coreMotionManager = <span class="type">CMMotionManager</span>()
+</code></pre><p>Before you go on, make sure that you update the Info.plist to add the "NSLocationAlwaysAndWhenInUseUsageDescription" (Privacy - Location Always and When In Use Usage Description) and "NSLocationWhenInUseUsageDescription" (Privacy - Location When In Use Usage Description) keys and give them both a value of "We'd like to use your motion data for this demo!"</p><p class="info">Although we will need this later on, what should be added to the Info.plist here is the "NSMotionUsageDescription" (Privacy - Motion Usage Description), but you can go ahead and add all three now - we'll need them later!</p><p>Then in the init method, start to ask the manager for data. Start by checking to see if the accelerometer is available. We want to demonstrate all the data types in this example, so if one of them is unavailable, go ahead and just return. Set the update interval for the accelerometer to 0.5 seconds, and then ask the motion manager to start providing accelerometer updates to a background <code>OperationQueue</code>. This will allow us to keep the user interface up to date, as long as we remember to dispatch UI updates back to the main thread.</p><pre><code>   <span class="keyword">init</span>() {
+    <span class="keyword">guard</span> coreMotionManager.<span class="property">isAccelerometerAvailable</span> == <span class="keyword">true else</span> { <span class="keyword">return</span> }
+    coreMotionManager.<span class="property">accelerometerUpdateInterval</span> = <span class="number">0.5</span>
+    coreMotionManager.<span class="call">startAccelerometerUpdates</span>(to: <span class="type">OperationQueue</span>()){ data, error <span class="keyword">in</span>
+
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">acceleration</span> = data!.acceleration
+      }
+    }
+</code></pre><p>The update to the acceleration object is sent back to the main queue so Combine and SwiftUI can respond to it properly.</p><p>Repeat that process for the gyro, checking to see if it is available, setting the update interval, and asking the manager for updates. Use those updates to update the <code>rotationRate</code> values.</p><pre><code>     <span class="keyword">guard</span> coreMotionManager.<span class="property">isGyroAvailable</span> == <span class="keyword">true else</span> { <span class="keyword">return</span> }
+    coreMotionManager.<span class="property">gyroUpdateInterval</span> = <span class="number">0.5</span>
+    coreMotionManager.<span class="call">startGyroUpdates</span>(to: <span class="type">OperationQueue</span>(), withHandler: { data, error <span class="keyword">in</span>
+
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">rotationRate</span> = data!.rotationRate
+      }
+    })
+</code></pre><p>Repeat the process one more time for the <code>DeviceMotion</code>, which contains accelerometer and gyroscope data, and use it to update the <code>attitude</code> and <code>gravity</code> values.</p><pre><code>     <span class="keyword">guard</span> coreMotionManager.<span class="property">isDeviceMotionAvailable</span> == <span class="keyword">true else</span> { <span class="keyword">return</span> }
+    coreMotionManager.<span class="property">gyroUpdateInterval</span> = <span class="number">0.5</span>
+    coreMotionManager.<span class="call">startDeviceMotionUpdates</span>(to: <span class="type">OperationQueue</span>(), withHandler: { data, error <span class="keyword">in</span>
+
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">pitch</span> = data!.attitude.<span class="property">pitch</span>
+        <span class="keyword">self</span>.<span class="property">roll</span> = data!.attitude.<span class="property">roll</span>
+        <span class="keyword">self</span>.<span class="property">yaw</span> = data!.attitude.<span class="property">yaw</span>
+        <span class="keyword">self</span>.<span class="property">gravity</span> = data!.gravity
+      }
+    })
+  }
+}
+
+</code></pre><p>That does it for the motion manager. Let's start to build some UI to display those values.</p><p>Make a view that will represent a row of motion data we'll display on screen.</p><pre><code><span class="keyword">struct</span> MotionRow: <span class="type">View</span> {
+</code></pre><p>For this row, we'll pass in a <code>Binding</code> to the value we want to represent. We'll also pass in which <code>Axis</code> the value is on, the name of the value, and create a <code>NumberFormatter</code> to help make the values fit for human consumption.</p><pre><code>  <span class="keyword">@Binding var</span> value: <span class="type">Double</span>
+  <span class="keyword">var</span> axis: <span class="type">Axis</span>
+  <span class="keyword">var</span> motionName: <span class="type">String</span>
+  <span class="keyword">let</span> formatter = <span class="type">NumberFormatter</span>()
+</code></pre><p>Next, define the body property, as with any SwiftUI view. Set the number style for the <code>NumberFormatter</code> to be a nice decimal style. Declare an <code>axisName</code> property, and in a switch statement below that, build the axis name based on the passed in <code>Axis</code> and <code>motionName</code> properties.</p><pre><code>  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    
+    formatter.<span class="property">numberStyle</span> = <span class="type">NumberFormatter</span>.<span class="type">Style</span>.<span class="property">decimal</span>
+    
+    <span class="keyword">var</span> axisName: <span class="type">String</span>
+    
+    <span class="keyword">switch</span> axis {
+    <span class="keyword">case</span> .<span class="dotAccess">X</span>:
+      axisName = <span class="string">"</span>\(motionName) <span class="string">(X)"</span>
+    <span class="keyword">case</span> .<span class="dotAccess">Y</span>:
+      axisName = <span class="string">"</span>\(motionName) <span class="string">(Y)"</span>
+    <span class="keyword">case</span> .<span class="dotAccess">Z</span>:
+      axisName = <span class="string">"</span>\(motionName) <span class="string">(Z)"</span>
+    }
+</code></pre><p>Finally, return an <code>HStack</code> with the <code>axisName</code>, a <code>Spacer()</code>, and a <code>Text</code> view that displays the value in question.</p><pre><code>    <span class="keyword">return</span> <span class="type">HStack</span> {
+      <span class="type">Text</span>(<span class="string">"</span>\(axisName)<span class="string">"</span>)
+      <span class="type">Spacer</span>()
+      <span class="type">Text</span>(<span class="string">"</span>\(formatter.<span class="call">string</span>(from: <span class="type">NSNumber</span>(value: value))!)<span class="string">"</span>)
+    }
+  }
+}
+
+</code></pre><p>Finally, build a <code>CoreMotionView</code> that will serve as the main view for the app.</p><pre><code><span class="keyword">struct</span> CoreMotionView: <span class="type">View</span> {
+</code></pre><p class="new">This semester, we're declaring the `motionManager` as a `@StateObject`, instead of an `@ObservedObject`, so the motion manager does not get deallocated once the view is destroyed and recreated.  This is new in iOS 14.</p><p>Declare an <code>@StateObject</code> that will be the motion manager. With this property wrapper, the view will be able to respond to changes and update accordingly, AND will also not get destroyed when the view redraws itself, like <code>@ObservedObject</code> would.</p><pre><code>  <span class="keyword">@StateObject var</span> motionManager = <span class="type">MotionManager</span>()
+</code></pre><p>In the body view, make a stack that contains, at the top level, a <code>Text</code> View, stating this is the Core Motion example, and a <code>Form</code> that contains 4 sections, one for each type of motion type. We haven't talked about forms specifically, although you have seen them if you have looked at the code to the <code>StudentView</code>. It allows you to group sets of data and present them in a nice way - very similar to a grouped table in UIKit.</p><p>Within each section, which will hold data for a given motion type, make <code>MotionRow</code> views for each axis.</p><pre><code>  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    
+    <span class="type">VStack</span> {
+      <span class="type">Text</span>(<span class="string">"Core Motion Example"</span>)
+      <span class="type">Form</span> {
+        <span class="type">Section</span> {
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">acceleration</span>.<span class="property">x</span>, axis: .<span class="dotAccess">X</span>, motionName: <span class="string">"Acceleration"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">acceleration</span>.<span class="property">y</span>, axis: .<span class="dotAccess">Y</span>, motionName: <span class="string">"Acceleration"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">acceleration</span>.<span class="property">z</span>, axis: .<span class="dotAccess">Z</span>, motionName: <span class="string">"Acceleration"</span>)
+        }
+        <span class="type">Section</span> {
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">pitch</span>, axis: .<span class="dotAccess">X</span>, motionName: <span class="string">"Gyroscope (Pitch)"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">yaw</span>, axis: .<span class="dotAccess">Y</span>, motionName: <span class="string">"Gyroscope (Yaw)"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">roll</span>, axis: .<span class="dotAccess">Z</span>, motionName: <span class="string">"Gyroscope (Roll)"</span>)
+        }
+
+        <span class="type">Section</span> {
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">rotationRate</span>.<span class="property">x</span>, axis: .<span class="dotAccess">X</span>, motionName: <span class="string">"Rotation Rate"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">rotationRate</span>.<span class="property">y</span>, axis: .<span class="dotAccess">Y</span>, motionName: <span class="string">"Rotation Rate"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">rotationRate</span>.<span class="property">z</span>, axis: .<span class="dotAccess">Z</span>, motionName: <span class="string">"Rotation Rate"</span>)
+        }
+
+        <span class="type">Section</span> {
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">gravity</span>.<span class="property">x</span>, axis: .<span class="dotAccess">X</span>, motionName: <span class="string">"Gravity"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">gravity</span>.<span class="property">y</span>, axis: .<span class="dotAccess">Y</span>, motionName: <span class="string">"Gravity"</span>)
+          <span class="type">MotionRow</span>(value: <span class="property">$motionManager</span>.<span class="property">gravity</span>.<span class="property">z</span>, axis: .<span class="dotAccess">Z</span>, motionName: <span class="string">"Gravity"</span>)
+        }
+      
+      }
+    }
+  }
+}
+
+<span class="keyword">struct</span> CoreMotionView_Previews: <span class="type">PreviewProvider</span> {
+  <span class="keyword">static var</span> previews: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">CoreMotionView</span>()
+  }
+}
+
+</code></pre><p>Now I can run this on my iPhone. I can move the phone along different axes, rotate the phone around different axes, display that rotation rate, and show the effect on gravity along each axis.<br><br>Finally, let’s try to detect a shake. For that, we can add an extension to <code>UIWindow</code> to respond to the end of the shake, and just have it print a message to console.</p><pre><code><span class="keyword">extension</span> <span class="type">UIWindow</span> {
+    <span class="keyword">open override func</span> motionEnded(<span class="keyword">_</span> motion: <span class="type">UIEvent</span>.<span class="type">EventSubtype</span>, with event: <span class="type">UIEvent</span>?) {
+        <span class="keyword">super</span>.<span class="call">motionEnded</span>(motion, with: event)
+        <span class="call">print</span>(<span class="string">"motion ended"</span>)
+    }
+}
+</code></pre><p>So we’ve seen that getting data from the <code>CMMotionManager</code> is pretty straightforward, thanks to a nice set of APIs in CoreMotion.</p><p style="float: left">Previous:  <A HREF="../02-IntroductionToCoreMotion/index.html">Introduction to Core Motion</A></p><p style="float: right">Next:  <A HREF="../04-MapInSwiftUI/index.html" class="nextModule">Map in SwiftUI</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

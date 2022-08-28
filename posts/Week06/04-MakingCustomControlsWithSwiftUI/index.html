@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week06/04-MakingCustomControlsWithSwiftUI"/><meta name="twitter:url" content="https://hococoder.com/posts/Week06/04-MakingCustomControlsWithSwiftUI"/><meta name="og:url" content="https://hococoder.com/posts/Week06/04-MakingCustomControlsWithSwiftUI"/><title>Week 6 - Making Custom Controls with SwiftUI | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 6 - Making Custom Controls with SwiftUI | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 6 - Making Custom Controls with SwiftUI | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 6 - Making Custom Controls with SwiftUI</h1><p style="float: left">Previous:  <A HREF="../03-VisionFaceDetectionExample/index.html">Vision Face Detection Example</A></p><p style="float: right">Next:  <A HREF="../05-MakingCustomControlsWithCoreGraphics/index.html" class="nextModule">Making Custom Controls with Core Graphics</A></p><BR/><BR/><h2>Overview</h2><p>iOS provides a wide variety of controls for your user to interact with - but what happens when your designer wants you to make this new, flashy interaction for the user? Custom controls are the answer! In addition to the built in views iOS provides, you can make your own! There are 2 different ways:</p><h2>SwiftUI</h2><p>SwiftUI has a few different mechanisms for making shapes. There are built in shapes, like <code>Rectangle</code> that we used in the <code>CoreImage</code> face detection example. <code>Rectangle</code>s, <code>Circle</code>s, <code>RoundedRectangle</code>s, <code>Ellipse</code>s and <code>Capsule</code>s are all available.</p><pre><code><span class="type">Rectangle</span>()
+  .<span class="call">fill</span>(<span class="type">Color</span>.<span class="property">red</span>)
+  .<span class="call">frame</span>(width: <span class="number">200</span>, height: <span class="number">200</span>)
+
+
+<span class="type">Capsule</span>()
+  .<span class="call">fill</span>(<span class="type">Color</span>.<span class="property">green</span>)
+  .<span class="call">frame</span>(width: <span class="number">200</span>, height: <span class="number">200</span>)
+</code></pre><p>You can also build a Path similar to what you do with <code>CoreGraphics</code>, using the <code>path(in rect:)</code> method to define what the shape looks like. In here you can also use paths from the built in shapes.</p><pre><code><span class="keyword">func</span> path(in rect: <span class="type">CGRect</span>) -&gt; <span class="type">Path</span> {
+  
+  <span class="keyword">var</span> path = <span class="type">Path</span>()
+  path.<span class="call">addArc</span>(center: <span class="type">CGPoint</span>(x: <span class="number">100</span>, y: <span class="number">100</span>), radius: <span class="type">CGFloat</span>(<span class="number">50</span>), startAngle:<span class="type">Angle</span>(degrees: <span class="number">0</span>), endAngle: <span class="type">Angle</span>(degrees: <span class="number">180</span>), clockwise: <span class="keyword">true</span>)
+  <span class="keyword">return</span> path
+}
+</code></pre><p>The above draws a hemisphere in the view, with a radius of 50, centered at (100, 100).</p><h2>SwiftUI Drawing Example</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_rp6v3afq?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_rp6v3afq&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Let's look at a few different examples of drawing in SwiftUI. Start by making a view to show our various examples:</p><p class="new">I've added an "Advance Progress" button and tied the progress indicators into that button to demo how they work</p><pre><code><span class="keyword">struct</span> CustomControlsExampleView: <span class="type">View</span> {
+  
+  <span class="keyword">@State var</span> frameSize: <span class="type">CGRect</span> = <span class="type">CGRect</span>()
+  <span class="keyword">@State var</span> percentage: <span class="type">CGFloat</span> = <span class="number">0.0</span>
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">VStack</span> {
+    
+      <span class="type">ProgressIndicator1</span>(percentage: <span class="property">$percentage</span>)
+        .<span class="call">frame</span>(width: <span class="number">200</span>, height: <span class="number">20</span>)
+      
+      <span class="type">ProgressIndicator2</span>(percentage: <span class="property">$percentage</span>)
+        .<span class="call">frame</span>(width: <span class="number">200</span>, height: <span class="number">20</span>)
+      
+      <span class="type">ProgressIndicator3</span>()
+      .<span class="call">frame</span>(width: <span class="number">250</span>, height: <span class="number">250</span>)
+      
+      <span class="type">Button</span>(<span class="string">"Advance Progress"</span>) {
+        <span class="call">advanceProgress</span>()
+      }
+      
+      <span class="type">CustomBubbleViewRep</span>(frameSize: <span class="property">$frameSize</span>, percentage: <span class="property">$bubblePercentage</span>).<span class="call">background</span>(<span class="type">GeometryGetter</span>(rect: <span class="property">$frameSize</span>))
+      
+    }
+  }
+  
+  <span class="keyword">func</span> advanceProgress() {
+    <span class="keyword">if</span> (percentage &lt;= <span class="number">1.0</span>) {
+      percentage += <span class="number">0.05</span>
+    }
+  }
+}
+
+</code></pre><p>First, you can use the built in Shapes.</p><pre><code><span class="keyword">struct</span> ProgressIndicator1: <span class="type">View</span> {
+  
+  <span class="keyword">@Binding var</span> percentage: <span class="type">CGFloat</span>
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    
+    <span class="type">ZStack</span>(alignment: .<span class="dotAccess">leading</span>) {
+      
+      <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">20</span>)
+      
+      <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">20</span>)
+        .<span class="call">foregroundColor</span>(<span class="type">Color</span>.<span class="property">blue</span>)
+        .<span class="call">frame</span>(width: <span class="number">200</span>*percentage, height: <span class="number">20</span>)
+      
+    }
+  }
+}
+</code></pre><p>I've placed these in a ZStack so they appear on top of one another, simulating a progress indicator.</p><p>You can also use the built in shapes to create Paths that you draw in a CGRect defined by the view:</p><pre><code><span class="keyword">struct</span> ProgressIndicator2: <span class="type">Shape</span> {
+  
+  <span class="keyword">@Binding var</span> percentage: <span class="type">CGFloat</span>
+  
+  <span class="keyword">func</span> path(in rect: <span class="type">CGRect</span>) -&gt; <span class="type">Path</span> {
+    
+    <span class="keyword">var</span> path = <span class="type">Path</span>()
+    
+    <span class="keyword">let</span> path1 = <span class="type">Capsule</span>()
+      .<span class="call">stroke</span>(lineWidth: <span class="number">5</span>)
+      .<span class="call">path</span>(in: rect)
+    
+    <span class="keyword">let</span> path2 = <span class="type">Capsule</span>()
+      .<span class="call">size</span>(width: rect.<span class="property">width</span>*percentage, height: rect.<span class="property">height</span>)
+      .<span class="call">path</span>(in: rect)
+  
+    path.<span class="call">addPath</span>(path1)
+    path.<span class="call">addPath</span>(path2)
+  
+    <span class="keyword">return</span> path
+  }
+}
+</code></pre><p>Here, the <code>path</code> function is used on the <code>Capsule</code> type to take the path that results from creating that capsule with the given line width and drawing it in the <code>CGRect</code> passed into the function.</p><p>You can run this in the preview canvas or the simulator, and tap the "Advance progress" button to see these in action.</p><p>Finally, you can simply use methods on Path to draw things like arcs.</p><pre><code><span class="keyword">struct</span> ProgressIndicator3: <span class="type">Shape</span> {
+
+  <span class="keyword">func</span> path(in rect: <span class="type">CGRect</span>) -&gt; <span class="type">Path</span> {
+    
+    <span class="keyword">var</span> path = <span class="type">Path</span>()
+    path.<span class="call">addArc</span>(center: <span class="type">CGPoint</span>(x: <span class="number">100</span>, y: <span class="number">100</span>), radius: <span class="type">CGFloat</span>(<span class="number">50</span>), startAngle:<span class="type">Angle</span>(degrees: <span class="number">0</span>), endAngle: <span class="type">Angle</span>(degrees: <span class="type">Double</span>((<span class="number">180</span>*percentage))), clockwise: <span class="keyword">false</span>)
+    <span class="keyword">return</span> path
+  }
+}
+</code></pre><p>The above draws a hemisphere in the view, with a radius of 50, centered at (100, 100).</p><p style="float: left">Previous:  <A HREF="../03-VisionFaceDetectionExample/index.html">Vision Face Detection Example</A></p><p style="float: right">Next:  <A HREF="../05-MakingCustomControlsWithCoreGraphics/index.html" class="nextModule">Making Custom Controls with Core Graphics</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

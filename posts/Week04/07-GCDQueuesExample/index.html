@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week04/07-GCDQueuesExample"/><meta name="twitter:url" content="https://hococoder.com/posts/Week04/07-GCDQueuesExample"/><meta name="og:url" content="https://hococoder.com/posts/Week04/07-GCDQueuesExample"/><title>Week 4 - GCD and Operation Queue Example | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 4 - GCD and Operation Queue Example | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 4 - GCD and Operation Queue Example | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 4 - GCD and Operation Queue Example</h1><p style="float: left">Previous:  <A HREF="../06-OperationQueues/index.html">Operation Queues</A></p><p style="float: right">Next:  <A HREF="../08-AsyncAwait/index.html" class="nextModule">Introduction to Async/Await</A></p><BR/><BR/><h2>Example</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_rqb4npy1?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_rqb4npy1&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>In this example, you'll learn how can use Grand Central Dispatch and <code>OperationQueue</code> to carryout asynchronous multithreading (be sure look at the <code>Week04View.swift</code> file in the EPExample App to run this). Let's look at an example that demonstrates how easy it is to spawn multiple threads. Let’s say I want to simulate doing a series of actions - here represented by for loops - that update the user interface. In a SwiftUI view, add 4 <code>Text</code> fields, one for each loop. For each view, add a property decorated with a <code>@State</code> property wrapper so the <code>Text</code> views can respond to changes in the property. Add a <code>Button</code> with the title "Run Threads", and for now make an empty closure for the button's action. The SwiftUI view should look like this</p><pre><code><span class="keyword">struct</span> Week4View: <span class="type">View</span> {
+  
+  <span class="keyword">@State var</span> text1String = <span class="string">""</span>
+  <span class="keyword">@State var</span> text2String = <span class="string">""</span>
+  <span class="keyword">@State var</span> text3String = <span class="string">""</span>
+  <span class="keyword">@State var</span> text4String = <span class="string">""</span>
+
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="keyword">return</span> <span class="type">VStack</span> {
+      <span class="type">Text</span>(text1String)
+      <span class="type">Text</span>(text2String)
+      <span class="type">Text</span>(text3String)
+      <span class="type">Text</span>(text4String)
+      <span class="type">Button</span>(<span class="string">"Run Threads"</span>) {
+        
+      }
+    }
+  }
+}
+</code></pre><p>Let’s make 3 methods in the source code - firstWay, secondWay and thirdWay - we’ll use these to represent the different ways of kicking off the for loops. In the button’s action closure, put calls to each method, and right now comment out the secondWay and thirdWay methods - we’ll call those later.</p><pre><code><span class="type">Button</span>(<span class="string">"Run Threads"</span>) {
+        
+  <span class="keyword">self</span>.<span class="call">firstWay</span>()
+  
+  <span class="comment">//self.secondWay()
+   
+  //self.thirdWay()</span>
+}
+</code></pre><p>In the <code>firstWay()</code> method, add the for loops below. Each loop walks through walk through the loop, prints out the index, update the string for respective text view, and sleeps for a second.</p><p class="new">I've simplified the code below compared to the code in the video.  The result is the same though.</p><pre><code><span class="keyword">private func</span> processStringInLoop(textString: <span class="keyword">inout</span> <span class="type">String</span>)
+{
+  <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span> ..&lt; <span class="number">5</span>
+  {
+    <span class="call">print</span>(<span class="string">"i is</span> \(i)<span class="string">"</span>)
+    textString = <span class="string">"Processing Index</span> \(i)<span class="string">"</span>
+    <span class="call">sleep</span>(<span class="number">1</span>)
+  }
+}
+
+<span class="keyword">func</span> firstWay()
+{
+  <span class="call">processStringInLoop</span>(textString: &amp;text1String)
+  <span class="call">processStringInLoop</span>(textString: &amp;text2String)
+  <span class="call">processStringInLoop</span>(textString: &amp;text3String)
+  <span class="call">processStringInLoop</span>(textString: &amp;text4String)
+}
+
+</code></pre><p>In the project you started this in, make sure to update the main <code>App</code> class to initialize the <code>Week4View</code> (or whatever you call it) as its contentView. If we run this now, you'll see that you get a very unresponsive UI - in fact it doesn’t update the UI at all until all 4 for loops are finished. You can see that each loop is getting executed, in series, in the console. The changes to the strings are taking place, but since this activity is done on the main thread, there is no chance for the user interface to update.</p><p>So, let’s do things a different way. We can use GCD (Grand Central Dispatch) to send each for loop off to its own thread. We’ll send it to the <code>.global</code> queue, state that it is <code>.userInitiated</code>, and call the <code>async</code> method on the queue so that the block gets started and then is immediately returned. Copy the for loop code from the <code>firstWay</code> method down to their own dispatch queues, and in the for loop, where you update the string for the Text view, be sure to dispatch that back to the main queue so it can update the user interface. Don't forget to change the method that the button calls to <code>secondWay()</code>. Now when you run the app, each for loop is sent to its own thread, and they run in lock step.</p><pre><code><span class="keyword">func</span> secondWay() {
+  <span class="comment">//way 2: dispatch the image loading to a dispatch queue and update the UI when done</span>
+  <span class="type">DispatchQueue</span>.<span class="call">global</span>(qos: .<span class="dotAccess">userInitiated</span>).<span class="call">async</span>
+  {
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span> ..&lt; <span class="number">5</span>
+    {
+      <span class="call">print</span>(<span class="string">"i is</span> \(i)<span class="string">"</span>)
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">text1String</span> = <span class="string">"Processing Index</span> \(i)<span class="string">"</span>
+      }
+      <span class="call">sleep</span>(<span class="number">1</span>)
+    }
+  }
+  
+  <span class="type">DispatchQueue</span>.<span class="call">global</span>(qos: .<span class="dotAccess">userInitiated</span>).<span class="call">async</span>
+  {
+    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="number">0</span> ..&lt; <span class="number">5</span>
+    {
+      <span class="call">print</span>(<span class="string">"j is</span> \(j)<span class="string">"</span>)
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">text2String</span> = <span class="string">"Processing Index</span> \(j)<span class="string">"</span>
+      }
+      <span class="call">sleep</span>(<span class="number">1</span>)
+    }
+  }
+  
+  <span class="type">DispatchQueue</span>.<span class="call">global</span>(qos: .<span class="dotAccess">userInitiated</span>).<span class="call">async</span>
+  {
+    <span class="keyword">for</span> k <span class="keyword">in</span> <span class="number">0</span> ..&lt; <span class="number">5</span>
+    {
+      <span class="call">print</span>(<span class="string">"k is</span> \(k)<span class="string">"</span>)
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">text3String</span> = <span class="string">"Processing Index</span> \(k)<span class="string">"</span>
+      }
+      <span class="call">sleep</span>(<span class="number">1</span>)
+    }
+  }
+  
+  <span class="type">DispatchQueue</span>.<span class="call">global</span>(qos: .<span class="dotAccess">userInitiated</span>).<span class="call">async</span>
+  {
+    <span class="keyword">for</span> l <span class="keyword">in</span> <span class="number">0</span> ..&lt; <span class="number">5</span>
+    {
+      <span class="call">print</span>(<span class="string">"l is</span> \(l)<span class="string">"</span>)
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">text4String</span> = <span class="string">"Processing Index</span> \(l)<span class="string">"</span>
+      }
+      <span class="call">sleep</span>(<span class="number">1</span>)
+    }
+  }
+}
+
+</code></pre><p>But what if you wanted to prioritize the execution of the for loops? For that, we’d have to use an <code>OperationQueue</code>. So in the <code>thirdWay</code> method, let’s setup an <code>OperationQueue</code>. For the operations through, we’ll have to make our own custom class - <code>Operation</code> is abstract. So let’s make our own class called <code>MyTextViewOperation</code>, and in the main method for the operation put the for loop behavior we saw earlier. We also need to pass in the string for the <code>Text</code> view we want to update on each thread, and you can use the init method for the <code>Operation</code> to do that. Back in the <code>thirdWay()</code> method, make 4 operations - 1 for each text view, and add them to the operation queue. Before we add them to the queue, let’s prioritize them. I want them to load in reverse order, so let’s make 1 dependent on 2, 2 dependent on 3, and 3 dependent on 4.</p><pre><code><span class="keyword">func</span> thirdWay() {
+  
+  <span class="comment">//way 3: make individual tasks, load the first 2, then load the second two.</span>
+  <span class="keyword">let</span> operation1 = <span class="type">MyTextViewOperation</span>(string: <span class="property">$text1String</span>)
+  <span class="keyword">let</span> operation2 = <span class="type">MyTextViewOperation</span>(string: <span class="property">$text2String</span>)
+  <span class="keyword">let</span> operation3 = <span class="type">MyTextViewOperation</span>(string: <span class="property">$text3String</span>)
+  <span class="keyword">let</span> operation4 = <span class="type">MyTextViewOperation</span>(string: <span class="property">$text4String</span>)
+  
+  operation1.<span class="call">addDependency</span>(operation2)
+  operation2.<span class="call">addDependency</span>(operation3)
+  operation3.<span class="call">addDependency</span>(operation4)
+  
+  <span class="keyword">let</span> operationQueue = <span class="type">OperationQueue</span>()
+  operationQueue.<span class="call">addOperation</span>(operation1)
+  operationQueue.<span class="call">addOperation</span>(operation2)
+  operationQueue.<span class="call">addOperation</span>(operation3)
+  operationQueue.<span class="call">addOperation</span>(operation4)
+}
+</code></pre><p>A note here about the <code>MyTextViewOperation</code>. We're passing in a <code>@State</code> property wrapper here, so the <code>MyTextViewOperation</code> must take in and work on a property with a <code>@Binding</code> property wrapper. So, decorate a <code>string</code> property with <code>@Binding</code>, and make the argument to the init method be of type <code>Binding&lt;String&gt;</code> so it can accept the passed in binding. Note also the special syntax to set this: <code>_string = string</code>.</p><pre><code><span class="keyword">class</span> MyTextViewOperation : <span class="type">Operation</span>
+{
+  <span class="keyword">@Binding var</span> string: <span class="type">String</span>
+  
+  <span class="keyword">init</span>(string: <span class="type">Binding</span>&lt;<span class="type">String</span>&gt;)
+  {
+    _string = string
+  }
+  
+  <span class="keyword">override func</span> main()
+  {
+    <span class="keyword">for</span> l <span class="keyword">in</span> <span class="number">0</span> ..&lt; <span class="number">5</span>
+    {
+      <span class="call">print</span>(<span class="string">"l is</span> \(l)<span class="string">"</span>)
+      <span class="type">DispatchQueue</span>.<span class="property">main</span>.<span class="call">async</span> {
+        <span class="keyword">self</span>.<span class="property">string</span> = <span class="string">"Processing Index</span> \(l)<span class="string">"</span>
+      }
+      <span class="call">sleep</span>(<span class="number">1</span>)
+    }
+  }
+}
+</code></pre><p>Change the button's method in the closure one more time, and run the app. The text views populate last to first - just how we specified in the code.<br><br>If you have any questions about this example, please leave a post in the forums.</p><p style="float: left">Previous:  <A HREF="../06-OperationQueues/index.html">Operation Queues</A></p><p style="float: right">Next:  <A HREF="../08-AsyncAwait/index.html" class="nextModule">Introduction to Async/Await</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

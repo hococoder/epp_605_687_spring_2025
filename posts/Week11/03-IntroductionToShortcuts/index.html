@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week11/03-IntroductionToShortcuts"/><meta name="twitter:url" content="https://hococoder.com/posts/Week11/03-IntroductionToShortcuts"/><meta name="og:url" content="https://hococoder.com/posts/Week11/03-IntroductionToShortcuts"/><title>Week 11 - Introduction to Shortcuts | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 11 - Introduction to Shortcuts | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 11 - Introduction to Shortcuts | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 11 - Introduction to Shortcuts</h1><p style="float: left">Previous:  <A HREF="../02-IntroductionToUserFeedback/index.html">Introduction to User Feedback</A></p><p style="float: right">Next:  <A HREF="../../Week12/00-Week12Overview/index.html">Week 12 Overview</A></p><BR/><BR/><h2>Overview</h2><center>
+<p class="suggestedReading">
+Suggested Reading: <BR/>
+<A HREF="https://developer.apple.com/documentation/sirikit">SiriKit (Apple Docs)</A><BR/>
+<A HREF="https://developer.apple.com/documentation/sirikit/donating_shortcuts">Donating Shortcuts (Apple Docs)</A><BR/>
+<A HREF="https://developer.apple.com/documentation/sirikit/adding_user_interactivity_with_siri_shortcuts_and_the_shortcuts_app">Adding User Interactivity</A>
+</p>
+</center><p>Siri Shortcuts, <code>SiriKit</code>, and Intents in iOS have been growing over the last few years, providing developer different ways to integrate their app with Siri and the broader Shortcut system in iOS. In this module, we're going to look at one way to hook into the shortcut system - <code>NSUserActivity</code>. <code>Intent</code>s are another way, but we won't focus on those here. Let's start by defining a simple view that we will want to automatically navigate to when the user clicks on a shortcut.</p><pre><code><span class="keyword">struct</span> ShortcutsView: <span class="type">View</span> {
+    
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">Text</span>(<span class="string">"This is the Shortcuts Lesson!"</span>)
+  }
+}
+</code></pre><p>With that in place, let's look at how to make a <code>NSUserActivity</code></p><h2>Making a <code>NSUserActivity</code></h2><p><code>NSUserActivity</code> was the original way to interface with the shortcut system, and while other techniques such as <code>Intent</code>s have come out since then, <code>NSUserActivity</code> is still very easy to implement and gives a nice set of functionality. Start by defining an entry in your <code>Info.plist</code> file - the key is <code>NSUserActivityTypes</code> and it's an array of strings. Here's what it looks like in XML style:</p><pre><code>&lt;key&gt;<span class="type">NSUserActivityTypes</span>&lt;/key&gt;
+&lt;array&gt;
+  &lt;string&gt;edu.<span class="property">jhu</span>.<span class="property">ep</span>.<span class="property">steele</span>.<span class="property">josh</span>.<span class="type">EPExampleAppF20</span>.<span class="type">ViewShortcutsLesson</span>&lt;/string&gt;
+&lt;/array&gt;
+</code></pre><p>Next, define the <code>userActivity</code> in our view. For the activity type, use the string we just placed into the <code>Info.plist</code> file. Make sure <code>isEligibleForSearch</code> and <code>isEligibleForPrediction</code> are set to true so the activity can be properly registered as a shortcut, and give it a <code>title</code> and <code>suggestedInvocationPhrase</code> for Siri. Initialize the <code>userInfo</code> dictionary to empty for now, we'll come back to that later.</p><pre><code><span class="keyword">private var</span> userActivity: <span class="type">NSUserActivity</span>
+
+<span class="keyword">init</span>() {
+  userActivity = <span class="type">NSUserActivity</span>(activityType: <span class="string">"edu.jhu.ep.steele.josh.EPExampleAppF20.ViewShortcutsLesson"</span>)
+  userActivity.<span class="property">isEligibleForSearch</span> = <span class="keyword">true</span>
+  userActivity.<span class="property">isEligibleForPrediction</span> = <span class="keyword">true</span>
+  userActivity.<span class="property">title</span> = <span class="string">"View the Shortcuts Lesson"</span>
+  userActivity.<span class="property">userInfo</span> = [:]
+  userActivity.<span class="property">suggestedInvocationPhrase</span> = <span class="string">"Learn about Shortcuts"</span>
+}
+</code></pre><h2>Donating NSUserActivities to Siri</h2><p>Having your activity defined is great, but you have to "donate" the shortcut to the system in order to have Siri recognize it, and better yet, associate it with the action that the user performed. The action here is simply the act of navigating to the page, so we can place the donation command - <code>becomeCurrent()</code> - in the <code>onAppear</code> modifier for the <code>Text</code> view. Add a <code>print</code> statement to allow us to see that the donation took place in the console.</p><pre><code><span class="type">Text</span>(<span class="string">"This is the Shortcuts lesson"</span>)
+  .<span class="call">onAppear</span>() {
+    <span class="keyword">self</span>.<span class="property">userActivity</span>.<span class="call">becomeCurrent</span>()
+    <span class="call">print</span>(<span class="string">"Donated User Activity!"</span>)
+  }
+</code></pre><p>Behind the scenes, Siri will start to track when activities get donated, and this will allow the system to start making inferences about when you usually do this action. For example, if you go to check the CNN app every night at 8 PM, Siri will start to suggest that app around 8 PM each night when you pull down and access the search screen.</p><h2>Seeing which Activities have been Donated</h2><p>When you're developing however, you don't want to engage with the app enough to have the system start to recognize patterns for when you access the app. Instead you can go into the simulator or device settings, go to the Developer settings, and set the 2 items in the image below to</p><img src="../../../week11/DeveloperShortcutSettings.png#centerResized" alt="Developer Shortcuts Settings"/><p>This will cause activities that have been donated to show up in the search screen (pull down on the main iOS screen to display the search bar and Siri Suggestions).</p><h2>Using Shortcuts to Navigate in your App</h2><p>While pressing on the shortcut will launch into your app (similar to how a notification works), it is much more convenient to have the shortcut take you to a particular section of your app to which the shortcut belongs. Let's setup a class that will allow us to track which list item and subsequent tab we want to navigate to in the EPExampleApp</p><pre><code><span class="keyword">import</span> SwiftUI
+<span class="keyword">import</span> CoreSpotlight
+<span class="keyword">import</span> MobileCoreServices
+<span class="keyword">import</span> Intents
+
+<span class="keyword">class</span> AppNavigationState: <span class="type">ObservableObject</span> {
+  
+  <span class="keyword">@Published var</span> tabIndex: <span class="type">Int</span> = <span class="number">0</span>
+  <span class="keyword">@Published var</span> listIndex: <span class="type">Int</span>? = <span class="number">0</span>
+}
+</code></pre><p>We can then take advantage of a different initializer in <code>NavigationLink</code> that takes in not only a destination and a label, but a <code>tag</code> and a <code>selection</code>. If the <code>tag</code> and the <code>selection</code> match, that item will get selected as long as it is on screen (this means not scrolled off the screen - this is a current limitation of <code>NavigationLink</code> and will hopefully be fixed in the future). For the <code>selection</code> we use the <code>appNavigationState.listIndex</code> binding.</p><pre><code><span class="type">NavigationLink</span>(destination: <span class="type">Week11View</span>(selection: <span class="property">$appNavigationState</span>.<span class="property">tabIndex</span>), 
+                                        tag: <span class="number">11</span>, 
+                                        selection: <span class="property">$appNavigationState</span>.<span class="property">listIndex</span>, 
+                                        label: { <span class="type">Text</span>(<span class="string">"Week 11"</span>) } )
+</code></pre><p>We can also pass in the <code>appNavigationState.tabIndex</code> value into the selection argument in the <code>Week11View</code>'s <code>TabView</code>. If the <code>selection</code> passed in matches the <code>tag</code> of the tab, that tab will be selected.</p><pre><code><span class="keyword">struct</span> Week11View: <span class="type">View</span> {
+  
+  <span class="keyword">@Binding var</span> selection: <span class="type">Int</span>
+
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">TabView</span>(selection: <span class="property">$selection</span>) {
+      <span class="type">LoggingView</span>()
+        .<span class="call">tabItem</span>({<span class="type">Text</span>(<span class="string">"Logging"</span>)})
+        .<span class="call">tag</span>(<span class="number">0</span>)
+      <span class="type">UserFeedbackView</span>()
+        .<span class="dotAccess">tabItem</span>{<span class="type">Text</span>(<span class="string">"Feedback"</span>)}
+        .<span class="call">tag</span>(<span class="number">1</span>)
+      <span class="type">ShortcutsView</span>()
+        .<span class="call">padding</span>()
+        .<span class="dotAccess">tabItem</span>{<span class="type">Text</span>(<span class="string">"Shortcuts"</span>)}
+        .<span class="call">tag</span>(<span class="number">2</span>)
+    }
+  }
+}
+</code></pre><p>To get the <code>AppNavigationState</code> passed into our app, let's go to the <code>EPExampleAppApp.swift</code> file and declare an instance there</p><pre><code><span class="keyword">let</span> appState = <span class="type">AppNavigationState</span>()
+</code></pre><p>And in <code>body</code> set some initial values for the <code>listIndex</code> and <code>tabIndex</code> values and send the <code>appState</code> into the <code>contentView</code> as an <code>environmentObject</code></p><pre><code>appState.<span class="property">listIndex</span> = <span class="number">0</span>
+appState.<span class="property">tabIndex</span> = <span class="number">0</span>
+
+<span class="keyword">return</span> <span class="type">WindowGroup</span> {
+  <span class="type">ContentView</span>()
+    .<span class="call">environment</span>(\.<span class="property">managedObjectContext</span>, persistenceController.<span class="property">container</span>.<span class="property">viewContext</span>)
+    .<span class="call">environmentObject</span>(appState)
+}
+</code></pre><p>There's a few more things to do so we can auto-navigate to a screen in our app. First, in the definition of the <code>userActivity</code> (over in the <code>ShortcutsView</code> struct), add the following:</p><pre><code>userActivity.<span class="property">userInfo</span>![<span class="string">"listIndex"</span>] = <span class="number">11</span>
+userActivity.<span class="property">userInfo</span>![<span class="string">"tabIndex"</span>] = <span class="number">2</span>
+</code></pre><p>This will set some dictionary values that will be used to navigate us to week 11, tab 2 (i.e. the third tab).</p><p>Finally, add this modifier to the <code>ContentView</code> in <code>EPExampleAppApp.swift</code></p><pre><code>.<span class="call">onContinueUserActivity</span>(<span class="string">"edu.jhu.ep.steele.josh.EPExampleAppF21.ViewShortcutsLesson"</span>, perform: { userActivity <span class="keyword">in</span>
+  <span class="call">print</span>(<span class="string">"Handling User Activity in SceneDelegate"</span>)
+  
+  <span class="keyword">let</span> shortcutDictionary = userActivity.<span class="property">userInfo</span>!
+  <span class="keyword">let</span> listIndex = shortcutDictionary[<span class="string">"listIndex"</span>]
+  <span class="keyword">let</span> tabIndex = shortcutDictionary[<span class="string">"tabIndex"</span>]
+
+  appState.<span class="property">listIndex</span> = listIndex <span class="keyword">as</span>! <span class="type">Int</span>?
+  appState.<span class="property">tabIndex</span> = tabIndex <span class="keyword">as</span>! <span class="type">Int</span>
+})
+</code></pre><p>This will take information from the <code>NSUserActivity</code> and use them set our <code>appState</code> values. After this, the app will start as usual. Let's look at how that acts in the simulator.</p><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_fbrcoxdl?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_fbrcoxdl&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Note that you can even search for the shortcut by using the suggested invocation phrase we assigned to the <code>userActivity</code>. Type "Learn about" in the search box, and the shortcut will be one of the results.</p><p style="float: left">Previous:  <A HREF="../02-IntroductionToUserFeedback/index.html">Introduction to User Feedback</A></p><p style="float: right">Next:  <A HREF="../../Week12/00-Week12Overview/index.html">Week 12 Overview</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

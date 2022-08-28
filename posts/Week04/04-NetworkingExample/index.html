@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week04/04-NetworkingExample"/><meta name="twitter:url" content="https://hococoder.com/posts/Week04/04-NetworkingExample"/><meta name="og:url" content="https://hococoder.com/posts/Week04/04-NetworkingExample"/><title>Week 4 - Networking Example | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 4 - Networking Example | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 4 - Networking Example | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 4 - Networking Example</h1><p style="float: left">Previous:  <A HREF="../03-NetworkingBestPractices/index.html">Networking Best Practices</A></p><p style="float: right">Next:  <A HREF="../05-GrandCentralDispatch/index.html" class="nextModule">Grand Central Dispatch</A></p><BR/><BR/><h2>Example</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_6mkyrbz4?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_6mkyrbz4&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Let's look at an example in a playground that can show off some of the features of the networking API. Recall that you have a few options when it comes to setting up a <code>URLSession</code> - you can use the shared object, or you can make up your own session. Both ways allow you to set your own configuration options.</p><pre><code><span class="keyword">import</span> UIKit
+
+<span class="comment">//Defining a URLSession
+
+//You can grab the shared session and modify it</span>
+<span class="keyword">let</span> sharedSession = <span class="type">URLSession</span>.<span class="property">shared</span>
+sharedSession.<span class="property">configuration</span>.<span class="property">allowsCellularAccess</span> = <span class="keyword">false</span>
+
+<span class="comment">//you can also get a default session configuration and customize that, using it to load your URLSession</span>
+<span class="keyword">let</span> defaultConfiguration = <span class="type">URLSessionConfiguration</span>.<span class="property">default</span>
+<span class="comment">// you can set session configuration settings here</span>
+
+<span class="keyword">let</span> defaultSession = <span class="type">URLSession</span>(configuration: defaultConfiguration)
+</code></pre><p>Next, let's get some data from the server via a data task. I've got an image on my server (the same one of me used in the gradebook app). Make a url object to grab that image.</p><pre><code><span class="comment">//Getting Data via a Data Task</span>
+
+<span class="keyword">guard let</span> url = <span class="type">URL</span>(string: <span class="string">"http://159.203.191.136/Josh.png"</span>) <span class="keyword">else</span> {
+  <span class="call">fatalError</span>()
+}
+</code></pre><p>Then, make a <code>dataTask</code> on the default session we made earlier</p><pre><code><span class="keyword">let</span> task = defaultSession.<span class="call">dataTask</span>(with: url) { data, response, error <span class="keyword">in</span>
+</code></pre><p>In the closure, do a few different things. First, check that the response code comes back in the 200 to 299 range, which is the "ok" response range in HTTP parlance.</p><pre><code>   <span class="comment">//first, check the http response code to make sure we got an OK (200-299) response</span>
+  <span class="keyword">guard let</span> httpResponse = response <span class="keyword">as</span>? <span class="type">HTTPURLResponse</span>,
+    (<span class="number">200</span>..&lt;<span class="number">300</span>).<span class="call">contains</span>(httpResponse.<span class="property">statusCode</span>) <span class="keyword">else</span> {
+      <span class="keyword">return</span>
+  }
+</code></pre><p>Then check to make sure the data isn't nil before proceeding.</p><pre><code>   <span class="comment">//then check to make sure the data is not nil</span>
+  <span class="keyword">guard let</span> data = data <span class="keyword">else</span> {
+    <span class="keyword">return</span>
+  }
+</code></pre><p>Finally, grab the data, and use it to build an <code>UIImage</code>. The lone "result" line in the playground allows you to view the image.</p><pre><code>   <span class="comment">//finally grab the data and build an image from it</span>
+  <span class="keyword">if let</span> result = <span class="type">UIImage</span>(data: data) {
+    <span class="call">print</span>(<span class="string">"Downloaded the image!"</span>)
+    result
+  }
+}
+</code></pre><p>Don't forget to take the task out of its initial "suspended" state by calling <code>resume()</code></p><pre><code><span class="comment">//All tasks start in a suspended state; so to get things going, call "resume"</span>
+task.<span class="call">resume</span>()
+</code></pre><p>Run the playground, and use the playground to show the image that got downloaded.</p><p>Next, let's try uploading metadata to the server. We'll use an endpoint I have on the server for this.</p><pre><code><span class="comment">//Uploading metadata to the server.  We'll need an endpoint, and luckily I have one setup on the server!</span>
+
+<span class="keyword">let</span> imageMetadata = <span class="string">"""
+{
+  "name": "Josh.png",
+  "description": "Josh Steele explains the sticker he's holding, describing the last command load"
+}
+"""</span>
+</code></pre><p>Again, setup the <code>URL</code> with the appropriate endpoint.</p><pre><code><span class="keyword">guard let</span> uploadURL = <span class="type">URL</span>(string: <span class="string">"http://159.203.191.136:8082/uploadImageMetadata"</span>) <span class="keyword">else</span> {
+  <span class="call">fatalError</span>()
+}
+</code></pre><p>Then, define a request with the url, turn the string of metadata into a JSON data object, set the request method to POST, and set the value for the Content-Type to "application/json" so the server knows what kind of data is coming in.</p><pre><code><span class="comment">//first define a request - we'll need to set properties for the upload</span>
+<span class="keyword">var</span> request = <span class="type">URLRequest</span>(url: uploadURL)
+<span class="keyword">let</span> jsonData = imageMetadata.<span class="call">data</span>(using: .<span class="dotAccess">utf8</span>)
+request.<span class="property">httpMethod</span> = <span class="string">"Post"</span>
+request.<span class="call">setValue</span>(<span class="string">"application/json"</span>, forHTTPHeaderField: <span class="string">"Content-Type"</span>)
+</code></pre><p>Finally, create an upload task with the request and data object, and in the completion handler, print out the response from the server if there is one. Don't forget to resume the uploadTask.</p><pre><code><span class="keyword">let</span> uploadTask = defaultSession.<span class="call">uploadTask</span>(with: request, from: jsonData, completionHandler: { data, response, error <span class="keyword">in</span>
+  
+  <span class="call">print</span>(response ?? <span class="string">"No response from the server; please check your connection</span> \(error!.localizedDescription)<span class="string">"</span>)
+})
+
+uploadTask.<span class="call">resume</span>()
+</code></pre><p>If you run the playground now, you'll see the response messages from the server - one for the download of the image, and another for the upload of the metadata. They may not appear in the order you listed them in the background - since they are asynchronous you don't know when the response will get returned, and therefore the order may vary.</p><p>In the next module, we'll talk about how to keep your user interface responsive when dealing with long running tasks like network operations.</p><p style="float: left">Previous:  <A HREF="../03-NetworkingBestPractices/index.html">Networking Best Practices</A></p><p style="float: right">Next:  <A HREF="../05-GrandCentralDispatch/index.html" class="nextModule">Grand Central Dispatch</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

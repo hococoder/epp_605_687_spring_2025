@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/Archive/99-AddingDocumentBrowserSupport"/><meta name="twitter:url" content="https://hococoder.com/Archive/99-AddingDocumentBrowserSupport"/><meta name="og:url" content="https://hococoder.com/Archive/99-AddingDocumentBrowserSupport"/><title>Week 8 - Adding Document Browser Support | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 8 - Adding Document Browser Support | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 8 - Adding Document Browser Support | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 8 - Adding Document Browser Support</h1><p style="float: left">Previous:  <A HREF="../UsingTheDocumentBrowser/index.html">Using The Document Browser</A></p><p style="float: right">Next:  <A HREF="../ProgrammingAssignment8/index.html" class="nextModule">Programming Assignment 8</A></p><BR/><BR/><h2>Overview</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_jhdoh7v3?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_jhdoh7v3&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>For the example app we've been working with, documents aren't the foundation of the app, but we do want to give the user the ability to find and pick documents that they may have created, or even pick and open files that they downloaded. To do this, we need to add document picker support to the app, and we can do that with the help of <code>UIDocumentPickerViewController</code></p><h2>Using <code>UIDocumentPickerViewController</code></h2><p>As with <code>UIDocumentBrowserViewController</code>, <code>UIDocumentPickerViewController</code> is in UIKit, so we need to wrap it with a <code>UIViewControllerRepresentable</code>. Start by doing that and also declaring an array of supported file types (which use the identifiers we discussed earlier) and a <code>@Binding</code> to store the selected filename from the picker, which we can use to pass back to the SwiftUI view that calls this picker.</p><pre><code><span class="keyword">struct</span> DocumentPickerViewController: <span class="type">UIViewControllerRepresentable</span> {
+  
+  <span class="keyword">private let</span> supportedTypes: [<span class="type">String</span>] = [<span class="string">"public.plain-text"</span>]
+  <span class="keyword">@Binding private var</span> selectedFileName: <span class="type">URL</span>
+</code></pre><p>Then declare a closure that takes in no arguments and returns no values that will embody what should take place when the picker closes.</p><pre><code>   <span class="comment">// Callback to be executed when users close the document picker.</span>
+  <span class="keyword">private let</span> onDismiss: () -&gt; <span class="type">Void</span>
+</code></pre><p>Initialize the struct, populating the <code>onDismiss</code> and <code>_selectedFileName</code> properties. Then a set a <code>typealias</code> for the <code>UIViewControllerType</code> type to be <code>UIDocumentPickerViewController</code>. This is so we don't have to change any references to <code>UIViewControllerType</code> in the protocol's delegate methods.</p><pre><code>   <span class="keyword">init</span>(onDismiss: <span class="keyword">@escaping</span> () -&gt; <span class="type">Void</span>, selectedFileName: <span class="type">Binding</span>&lt;<span class="type">URL</span>&gt;) {
+    <span class="keyword">self</span>.<span class="property">onDismiss</span> = onDismiss
+    _selectedFileName = selectedFileName
+  }
+  
+  <span class="keyword">typealias</span> UIViewControllerType = <span class="type">UIDocumentPickerViewController</span>
+</code></pre><p>Implement the <code>makeUIViewController</code> function, creating, setting properties on, and returning a <code>UIDocumentPickerViewController</code>. For this example we can leave the <code>updateUIViewController</code> function empty.</p><pre><code>   <span class="keyword">func</span> makeUIViewController(context: <span class="type">Context</span>) -&gt; <span class="type">DocumentPickerViewController</span>.<span class="type">UIViewControllerType</span> {
+    <span class="keyword">let</span> documentPickerController = <span class="type">UIDocumentPickerViewController</span>(documentTypes: supportedTypes, in: .<span class="dotAccess">import</span>)
+    documentPickerController.<span class="property">allowsMultipleSelection</span> = <span class="keyword">false</span>
+    documentPickerController.<span class="property">delegate</span> = context.<span class="property">coordinator</span>
+    <span class="keyword">return</span> documentPickerController
+  }
+  
+  <span class="keyword">func</span> updateUIViewController(<span class="keyword">_</span> uiViewController: <span class="type">DocumentPickerViewController</span>.<span class="type">UIViewControllerType</span>, context: <span class="type">Context</span>) {}
+</code></pre><p>As with <code>UIViewRepresentable</code>, make the <code>makeCoordinator</code> function and the <code>Coordinator</code> class. Here you need to implement the protocol methods we discussed last module for <code>UIDocumentPickerDelegate</code>. In the case of the user pressing cancel, call the <code>onDismiss</code> closure, but for the <code>didPickDocument</code> function set the selected file name to the passed in <code>url</code>.</p><pre><code>   <span class="comment">// MARK: Coordinator</span>
+  
+  <span class="keyword">func</span> makeCoordinator() -&gt; <span class="type">Coordinator</span> {
+    <span class="type">Coordinator</span>(<span class="keyword">self</span>)
+  }
+  
+  <span class="keyword">class</span> Coordinator: <span class="type">NSObject</span>, <span class="type">UIDocumentPickerDelegate</span>, <span class="type">ObservableObject</span> {
+
+    <span class="keyword">var</span> parent: <span class="type">DocumentPickerViewController</span>
+    
+    <span class="keyword">init</span>(<span class="keyword">_</span> documentPickerController: <span class="type">DocumentPickerViewController</span>) {
+      parent = documentPickerController
+    }
+    
+    <span class="keyword">func</span> documentPicker(<span class="keyword">_</span> controller: <span class="type">UIDocumentPickerViewController</span>, didPickDocumentsAt urls: [<span class="type">URL</span>]) {
+      
+      parent.<span class="property">selectedFileName</span> = url
+    }
+    
+    <span class="keyword">func</span> documentPickerWasCancelled(<span class="keyword">_</span> controller: <span class="type">UIDocumentPickerViewController</span>) {
+      parent.<span class="call">onDismiss</span>()
+    }
+  }
+}
+</code></pre><p>Our picker can be used in our SwiftUI view by displaying it in a sheet, which you should be very familiar with by now.</p><pre><code><span class="keyword">struct</span> UploadingFiles: <span class="type">View</span> {
+
+  <span class="keyword">@State var</span> isPresented = <span class="keyword">false
+  @State var</span> fileURLToUpload: <span class="type">URL</span> = <span class="type">URL</span>(fileURLWithPath: <span class="string">""</span>)
+  <span class="keyword">@State var</span> uploadStatus = <span class="string">""</span>
+
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">VStack</span> {
+      <span class="type">Button</span>(<span class="string">"Select File"</span>) {
+        <span class="keyword">self</span>.<span class="property">isPresented</span>.<span class="call">toggle</span>()
+      }.<span class="call">sheet</span>(isPresented: <span class="property">$isPresented</span>) {
+        () -&gt; <span class="type">DocumentPickerViewController</span> <span class="keyword">in</span>
+        <span class="type">DocumentPickerViewController</span>(onDismiss: {
+          <span class="keyword">self</span>.<span class="property">isPresented</span> = <span class="keyword">false</span>
+        }, selectedFileName: <span class="keyword">self</span>.<span class="property">$fileURLToUpload</span>)
+      }.<span class="call">padding</span>()
+      <span class="type">Text</span>(<span class="string">"URL to Upload:"</span>).<span class="call">padding</span>()
+      <span class="keyword">if</span> fileURLToUpload != <span class="type">URL</span>(fileURLWithPath: <span class="string">""</span>) {
+        <span class="type">Text</span>(<span class="string">"</span>\(fileURLToUpload)<span class="string">"</span>).<span class="call">padding</span>()
+      }
+      <span class="keyword">else</span> {
+        <span class="type">Text</span>(<span class="string">"No file selected"</span>).<span class="call">padding</span>()
+      }
+      <span class="type">Button</span>(<span class="string">"Upload File to Server"</span>) {
+        <span class="keyword">self</span>.<span class="call">uploadURL</span>(url: fileURLToUpload)
+      }.<span class="call">padding</span>()
+      <span class="keyword">if</span> !uploadStatus.<span class="property">isEmpty</span> {
+        <span class="type">Text</span>(uploadStatus)
+      }
+    }
+}
+</code></pre><p>The <code>uploadURL</code> function that gets fired when the "Upload File to Server" button is pressed is simple, and uses some code from week 4 to upload some metadata about the file. This call to the server includes a deliberate delay in responding of 8 seconds so it emulates a file getting uploaded to the server.</p><pre><code><span class="keyword">func</span> uploadURL(url: <span class="type">URL</span>) {
+
+  <span class="keyword">let</span> filename = url.<span class="call">deletingPathExtension</span>().<span class="property">lastPathComponent</span>
+  <span class="keyword">let</span> assignmentMetadata = <span class="string">"""
+  {
+    "name":
+  """</span> + filename +
+  <span class="string">"""
+    ",description": "File to upload"
+  }
+  """</span>
+  <span class="keyword">guard let</span> uploadURL = <span class="type">URL</span>(string: <span class="string">"http://159.203.191.136:8080/uploadAssignment"</span>) <span class="keyword">else</span> { <span class="call">fatalError</span>() }
+
+  <span class="keyword">var</span> request = <span class="type">URLRequest</span>(url: uploadURL)
+  <span class="keyword">let</span> jsonData = assignmentMetadata.<span class="call">data</span>(using: .<span class="dotAccess">utf8</span>)
+  request.<span class="property">httpMethod</span> = <span class="string">"Post"</span>
+  request.<span class="call">setValue</span>(<span class="string">"application/json"</span>, forHTTPHeaderField: <span class="string">"Content-Type"</span>)
+
+  <span class="keyword">let</span> uploadTask = <span class="type">URLSession</span>.<span class="property">shared</span>.<span class="call">uploadTask</span>(with: request, from: jsonData) { data, response, error <span class="keyword">in
+    if let</span> error = error {
+      <span class="call">print</span>(<span class="string">"No response from the server; please check your connection</span> \(<span class="type">String</span>(describing: error))<span class="string">"</span>)
+      <span class="keyword">return</span>
+    }
+    <span class="keyword">self</span>.<span class="property">uploadStatus</span> = <span class="string">"Uploaded</span> \(filename)<span class="string">"</span>
+    
+  }
+  uploadTask.<span class="call">resume</span>()
+}
+</code></pre><p>Running the example now, you can go to the "Uploading" tab and select a file - select the Notes.txt file we made earlier. Once chosen, the full path will display in the view and the button to upload the file will be enabled. Press that button, and in about 8-10 seconds you'll get an update saying the file has been uploaded (remember, this upload process to the server is faked for the purposes of the demo - the server I have setup for this doesn't have that capability yet).</p><p style="float: left">Previous:  <A HREF="../UsingTheDocumentBrowser/index.html">Using The Document Browser</A></p><p style="float: right">Next:  <A HREF="../ProgrammingAssignment8/index.html" class="nextModule">Programming Assignment 8</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

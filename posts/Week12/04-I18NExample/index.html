@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week12/04-I18NExample"/><meta name="twitter:url" content="https://hococoder.com/posts/Week12/04-I18NExample"/><meta name="og:url" content="https://hococoder.com/posts/Week12/04-I18NExample"/><title>Week 12 - Internationalization and Localization Example | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 12 - Internationalization and Localization Example | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 12 - Internationalization and Localization Example | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 12 - Internationalization and Localization Example</h1><p style="float: left">Previous:  <A HREF="../03-IntroductionToI18N/index.html">Introduction to I18N and L10N</A></p><p style="float: right">Next:  <A HREF="../05-IntroductionToInstruments/index.html" class="nextModule">Introduction to Instruments</A></p><BR/><BR/><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_5gllbcaa?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_5gllbcaa&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Let's take a look at how we can use some of these localization techniques in our code. Here's the start of a view:</p><pre><code><span class="keyword">struct</span> i18nView: <span class="type">View</span> {
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">VStack</span> {
+      <span class="type">Text</span>(<span class="string">"Welcome!"</span>)
+      <span class="type">HStack</span> {
+        <span class="type">Image</span>(<span class="string">"cook_hero"</span>).<span class="call">resizable</span>().<span class="call">aspectRatio</span>(contentMode: .<span class="dotAccess">fit</span>)
+        <span class="type">Text</span>(<span class="string">"This is an example from week 12"</span>)
+      }
+    }
+    
+  }
+}
+</code></pre><p>I have some text and an image on screen. I want to localize those strings so I can present them in 2 other languages - French and Arabic (thank you Google Translate, and apologies if I messed anything up!).</p><p>Start by making a <code>Localizable.strings</code> file. When that is done, select the file, and in the File inspector, choose "Localize". This will, behind the scenes, add a folder for our base localization (en.proj, which isn't shown in Xcode but is on disk).</p><p>Next, go to the project file, and in the Project settings, add 2 localizations - French and Arabic, and only choose our Localizable.strings file in the popup (we don't need to worry about anything in ResearchKit or in the storyboards for the purposes of this example). Once you do this, you can now see a disclosure triangle next to the Localizable.strings file, and if you open it, the 3 language variants of the file will be shown. Add the following to the English, French, and Arabic files, respectively:</p><pre><code><span class="string">"Welcome!"</span> = <span class="string">"Welcome!"</span>;
+<span class="string">"This is an example from week 12"</span> = <span class="string">"This is an example from week 12"</span>;
+</code></pre><pre><code><span class="string">"Welcome!"</span> = <span class="string">"Bienvenue!"</span>;
+<span class="string">"This is an example from week 12"</span> = <span class="string">"Ceci est un exemple de la semaine 12"</span>;
+</code></pre><pre><code><span class="string">"Welcome!"</span> = <span class="string">"أهلا بك!"</span>;
+<span class="string">"This is an example from week 12"</span> = <span class="string">"هذا مثال من الأسبوع 12"</span>;
+</code></pre><p>Now, update the previews section for this view to the following:</p><pre><code><span class="keyword">struct</span> i18nView_Previews: <span class="type">PreviewProvider</span> {
+  <span class="keyword">static var</span> previews: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">Group</span> {
+      <span class="call">i18nView</span>()
+        .<span class="call">previewLayout</span>(.<span class="dotAccess">sizeThatFits</span>)
+        .<span class="call">previewDisplayName</span>(<span class="string">"English Localization"</span>)
+      <span class="call">i18nView</span>()
+        .<span class="call">environment</span>(\.<span class="property">locale</span>, .<span class="keyword">init</span>(identifier: <span class="string">"fr"</span>))
+        .<span class="call">previewLayout</span>(.<span class="dotAccess">sizeThatFits</span>)
+        .<span class="call">previewDisplayName</span>(<span class="string">"French Localization"</span>)
+      <span class="call">i18nView</span>()
+        .<span class="call">environment</span>(\.<span class="property">locale</span>, .<span class="keyword">init</span>(identifier: <span class="string">"ar"</span>))
+        .<span class="call">previewLayout</span>(.<span class="dotAccess">sizeThatFits</span>)
+        .<span class="call">previewDisplayName</span>(<span class="string">"Arabic Localization"</span>)
+    }
+  }
+}
+</code></pre><p>This does a few things. It gets rid of the surrounding "chrome" of the simulator, only showing the view itself using the <code>previewLayout(.sizeThatFits)</code> modifier. It also gives each preview a name using the <code>previewDisplayName</code> modifier, and also updates the environment's locale for the French and Arabic views using the <code>.environment(\.locale, .init(identifier:))</code> modifier. Resume the preview canvas, and you can see each of the views appear in their respective languages. We didn't have to do anything other than provide translations and the tell the preview canvas to render a specific locale.</p><p>One other thing we can here is enforce right to left display for Arabic, which is an Internationalization step. That's another easy environment modifier:</p><pre><code><span class="call">i18nView</span>()
+  .<span class="call">environment</span>(\.<span class="property">locale</span>, .<span class="keyword">init</span>(identifier: <span class="string">"ar"</span>))
+  .<span class="call">previewLayout</span>(.<span class="dotAccess">sizeThatFits</span>)
+  .<span class="call">previewDisplayName</span>(<span class="string">"Arabic Localization"</span>)
+  .<span class="call">environment</span>(\.<span class="property">layoutDirection</span>, .<span class="dotAccess">rightToLeft</span>)
+</code></pre><p>Now the image will appear on the right, with the text on the left.</p><p>One more thing we can look at is using <code>LocalizedStringKey</code> objects and string interpolation. Add the following to the Localizable.strings files:</p><p>English:</p><pre><code><span class="string">"goodbyeStatement"</span> = <span class="string">"Bye!"</span>;
+<span class="string">"myNameIs %@"</span> = <span class="string">"My name is %@"</span>;
+</code></pre><p>French:</p><pre><code><span class="string">"goodbyeStatement"</span> = <span class="string">"Au revoir!"</span>;
+<span class="string">"myNameIs %@"</span> = <span class="string">"Je m'apelle %@"</span>;
+</code></pre><p>Arablc:</p><pre><code><span class="string">"goodbyeStatement"</span> = <span class="string">"وداعا!"</span>;
+<span class="string">"myNameIs %@"</span> = <span class="string">"اسمي هو %@"</span>;
+</code></pre><p>And update the view to add a goodbye statement and a name statement.</p><pre><code><span class="keyword">struct</span> i18nView: <span class="type">View</span> {
+  
+  <span class="keyword">var</span> goodbye: <span class="type">LocalizedStringKey</span> = <span class="string">"goodbyeStatement"</span>
+  <span class="keyword">let</span> name = <span class="string">"Josh"</span>
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">VStack</span> {
+      <span class="type">Text</span>(<span class="string">"Welcome!"</span>)
+      <span class="type">HStack</span> {
+        <span class="type">Image</span>(<span class="string">"cook_hero"</span>).<span class="call">resizable</span>().<span class="call">aspectRatio</span>(contentMode: .<span class="dotAccess">fit</span>)
+        <span class="type">Text</span>(<span class="string">"This is an example from week 12"</span>)
+      }
+      <span class="type">Text</span>(<span class="string">"myNameIs</span> \(name)<span class="string">"</span>)
+      <span class="type">Text</span>(goodbye)
+    }
+    
+  }
+}
+</code></pre><p>The <code>LocalizedStringKey</code> is assigned to a key from the Localizable.strings file, and that substitution is handled at run time based on the value of that key in the respective language files.</p><p>The other text field demonstrates that the key in the Localizable.strings file can actually take in an argument using string interpolation. That can then be used as a lookup key into the Localizable.strings file, but the argument is passed in to the value side as well. So "myNameIs (name)" gets turned into "myNameIs Josh" and since "Josh" replaces the %@ on the key side, it also replaces it on the value side, resulting in "My name is Josh" as the interpolated value. NOTE: The string interpolation replacement only happens on the device, not on the simulator.</p><p style="float: left">Previous:  <A HREF="../03-IntroductionToI18N/index.html">Introduction to I18N and L10N</A></p><p style="float: right">Next:  <A HREF="../05-IntroductionToInstruments/index.html" class="nextModule">Introduction to Instruments</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week03/09-PopulatingTheDatabase"/><meta name="twitter:url" content="https://hococoder.com/posts/Week03/09-PopulatingTheDatabase"/><meta name="og:url" content="https://hococoder.com/posts/Week03/09-PopulatingTheDatabase"/><title>Week 3 - Populating the Database | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 3 - Populating the Database | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 3 - Populating the Database | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 3 - Populating the Database</h1><p style="float: left">Previous:  <A HREF="../08-StoringAndFetching/index.html">Storing and Fetching</A></p><p style="float: right">Next:  <A HREF="../10-SwiftUIImprovements/index.html" class="nextModule">SwiftUI Improvements</A></p><BR/><BR/><h2>Making a new Data Model in the App</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_go80qybb?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_go80qybb&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>With these helper methods in hand, let's create a new data model struct. Up to this point, we had read in our data from a set of JSON files, and considered that to be our truth. This is read only, however, and we want something that we can write to as well. This is where the database will come in. We'll still use the JSON files to initialize our database however - but now we'll have the option of both reading AND writing data to our model. In this data model we'll define the <code>ClassAssignmentsCoreDataModel</code> context object we've referred to in the previous parts of this module.<br><br>Let's make a struct for that, and have it adopt the <code>AssignmentGraderModel</code> like our JSON data model did. Don't forget to implement the methods that the protocol requires; for now have them return empty arrays.</p><pre><code><span class="keyword">import</span> Foundation
+<span class="keyword">import</span> SwiftUI
+<span class="keyword">import</span> CoreData
+
+<span class="keyword">struct</span> ClassAssignmentsCoreDataModel: <span class="type">AssignmentGraderModel</span> {
+  <span class="keyword">var</span> schoolClasses: [<span class="type">CourseClass</span>] { <span class="keyword">return</span> [] }
+  <span class="keyword">var</span> assignments: [<span class="type">Assignment</span>] { <span class="keyword">return</span> [] }
+  <span class="keyword">var</span> students: [<span class="type">Student</span>] { <span class="keyword">return</span> [] }
+  <span class="keyword">var</span> teachers: [<span class="type">Teacher</span>] { <span class="keyword">return</span> [] }
+</code></pre><p>To get access to the method that our “Use Core Data” option gave us when we created the project, we need to get a hold of the context from our shared <code>PersistenceController</code> struct - remember that’s the scratch space we’ll use to setup our object before saving them to the database. Note that we can't use the context we injected into the SwiftUI Environment since this isn't a SwiftUI view.</p><pre><code>   <span class="keyword">static var</span> context = <span class="type">PersistenceController</span>.<span class="property">shared</span>.<span class="property">container</span>.<span class="property">viewContext</span>
+  <span class="keyword">let</span> classAssignmentTestData = <span class="type">ClassAssignmentsModelTestData</span>()
+</code></pre><h2>Deleting Previous Entries</h2><p>Now let's define some methods to empty and load the database. Make a new method called <code>emptyDB()</code>. We'll use this in between runs of the app to make sure we're starting from scratch and to avoid duplicated data. This uses a different technique from what we discussed in the last module, where we walked through each element and deleted it, and instead uses <code>NSBatchDeleteRequest</code> to delete all the values returned from a <code>NSFetchRequest</code>.</p><p>For each type (except for <code>StudentEntity</code>, which you'll do as part of your homework), make a fetch request. Recall that the class that Core Data auto generates makes a <code>fetchRequest()</code> method for you, which you can call here. With that fetch request in hand, you can make a <code>NSBatchDeleteRequest</code>, which takes in the fetch request you just generated.</p><pre><code><span class="keyword">func</span> emptyDB() {
+    
+    <span class="keyword">let</span> teacherFetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">TeacherEntity</span>.<span class="call">fetchRequest</span>()
+    <span class="keyword">let</span> teacherDeleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: teacherFetchRequest)
+    
+    <span class="keyword">let</span> classesFetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">CourseClassEntity</span>.<span class="call">fetchRequest</span>()
+    <span class="keyword">let</span> classesDeleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: classesFetchRequest)
+    
+    <span class="keyword">let</span> assignmentsFetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">AssignmentEntity</span>.<span class="call">fetchRequest</span>()
+    <span class="keyword">let</span> assignmentsDeleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: assignmentsFetchRequest)
+</code></pre><p>To make the request go through, you can use the context's execute method, passing in each of the delete requests. Since these operations may throw errors, don't forget to wrap the attempts with a do/catch block.</p><pre><code>     <span class="keyword">do</span> {
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">execute</span>(teacherDeleteRequest)
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">execute</span>(classesDeleteRequest)
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">execute</span>(assignmentsDeleteRequest)
+    } <span class="keyword">catch let</span> error <span class="keyword">as</span> <span class="type">NSError</span> {
+      <span class="call">print</span>(<span class="string">"error during deletion</span> \(error.<span class="property">localizedDescription</span>)<span class="string">"</span>)
+    }
+  }
+</code></pre><h2>Populating the Database</h2><p>Now let's populate the database. First, make a <code>loadAllDatabaseData</code> method (again, excluding the <code>Student</code> type, you'll do that for homework)</p><pre><code>   <span class="keyword">func</span> loadAllDatabaseData()
+  {
+    <span class="call">emptyDB</span>()
+    
+    <span class="call">loadTeacherDatasetFrom</span>()
+    <span class="call">loadAssignmentDatasetFrom</span>()
+    <span class="call">loadCourseClassesDatasetFrom</span>()
+
+  }
+</code></pre><p>Then make a method for each type to make database entries from the JSON model that we already have. We can take advantage of the <code>convertToManagedObject</code> method we wrote earlier to convert each of the JSON based entries into a <code>NSManagedObject</code> object, saving the context when we're done with the <code>save()</code> method.</p><pre><code>   <span class="keyword">func</span> loadTeacherDatasetFromJSON() {
+    
+    <span class="keyword">guard let</span> teachers = classAssignmentTestData.<span class="property">teachers</span> <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="call">print</span>(<span class="string">"Error loading teachers"</span>)
+    }
+    
+    teachers.<span class="call">forEach</span>({ teacher <span class="keyword">in _</span> = teacher.<span class="call">convertToManagedObject</span>() })
+    
+    <span class="keyword">do</span> {
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">save</span>()
+    } <span class="keyword">catch</span> {
+      <span class="call">print</span>(<span class="string">"Error saving teacher to core data</span> \(error)<span class="string">"</span>)
+    }
+  }
+
+  <span class="keyword">func</span> loadAssignmentDatasetFromJSON() {
+    
+    <span class="keyword">guard let</span> assignments = classAssignmentTestData.<span class="property">assignments</span> <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="call">print</span>(<span class="string">"Error loading assignments "</span>)
+    }
+    
+    assignments.<span class="call">forEach</span>({ assignment <span class="keyword">in _</span> = assignment.<span class="call">convertToManagedObject</span>() })
+    
+    <span class="keyword">do</span> {
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">save</span>()
+    } <span class="keyword">catch</span> {
+      <span class="call">print</span>(<span class="string">"Error saving assignment to core data</span> \(error)<span class="string">"</span>)
+    }
+  }
+
+  <span class="keyword">func</span> loadSchoolClassesDatasetFromJSON() {
+    
+    <span class="keyword">guard let</span> schoolClasses = classAssignmentTestData.<span class="property">schoolClasses</span> <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="call">print</span>(<span class="string">"Error loading school classes"</span>)
+    }
+    schoolClasses.<span class="call">forEach</span>({ schoolClass <span class="keyword">in _</span> = schoolClass.<span class="call">convertToManagedObject</span>() })
+    
+    <span class="keyword">do</span> {
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">save</span>()
+    } <span class="keyword">catch</span> {
+      <span class="call">print</span>(<span class="string">"Error saving school class to core data</span> \(error)<span class="string">"</span>)
+    }
+    
+  }
+</code></pre><p>Next, let's make some helper methods to get data from the database. Both of these are similar: make a fetch request, assign a <code>NSPredicate</code> to restrict what values you get back, and then ask the context to perform the fetch request and return the results. Note that the <code>NSPredicate</code> uses a c-style format string to build the predicate for the query.</p><pre><code>   <span class="keyword">static func</span> getCourseClassWith(name: <span class="type">String</span>) -&gt; <span class="type">CourseClassEntity</span>?
+  {
+    <span class="keyword">let</span> request: <span class="type">NSFetchRequest</span>&lt;<span class="type">CourseClassEntity</span>&gt; = <span class="type">CourseClassEntity</span>.<span class="call">fetchRequest</span>()
+    request.<span class="property">predicate</span> = <span class="type">NSPredicate</span>(format: <span class="string">"courseClassName == %@"</span>, name)
+    
+    <span class="keyword">do</span> {
+      <span class="keyword">let</span> courseClass = <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">fetch</span>(request).<span class="property">first</span>
+      <span class="keyword">return</span> courseClass
+    } <span class="keyword">catch</span> {
+      <span class="call">print</span>(<span class="string">"school class fetch failed"</span>)
+      <span class="keyword">return nil</span>
+    }
+  }
+
+  <span class="keyword">static func</span> getAssignmentWith(uuid: <span class="type">UUID</span>) -&gt; <span class="type">AssignmentEntity</span>?
+  {
+    <span class="keyword">let</span> request: <span class="type">NSFetchRequest</span>&lt;<span class="type">AssignmentEntity</span>&gt; = <span class="type">AssignmentEntity</span>.<span class="call">fetchRequest</span>()
+    request.<span class="property">predicate</span> = <span class="type">NSPredicate</span>(format: <span class="string">"id == %@"</span>, uuid.<span class="property">uuidString</span>)
+    
+    <span class="keyword">do</span> {
+      <span class="keyword">let</span> assignment = <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">fetch</span>(request).<span class="property">first</span>
+      <span class="keyword">return</span> assignment
+    } <span class="keyword">catch</span> {
+      <span class="call">print</span>(<span class="string">"Assignment fetch failed"</span>)
+      <span class="keyword">return nil</span>
+    }
+  }
+</code></pre><p>Now since we can get values, we also need to establish relationships between objects, where applicable. We'll define the <code>Teacher</code> to <code>CourseClass</code> relationship here, and you'll define the ones for the student in your homework assignment. Here, we have to use the information passed into the method to grab the appropriate objects from the database (like the get method above) and then again take advantage of the auto-generated code from CoreData. <code>addToActivelyTeaching</code> will assign the class to the teacher's "activelyTeaching" set. Calling save pushes the relationship to the database.</p><pre><code>   <span class="keyword">func</span> assign(teacher jhed: <span class="type">String</span>, toCourseClass courseClassName: <span class="type">String</span>)
+  {
+    <span class="keyword">let</span> teacherRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">TeacherEntity</span>&gt; = <span class="type">TeacherEntity</span>.<span class="call">fetchRequest</span>()
+    teacherRequest.<span class="property">predicate</span> = <span class="type">NSPredicate</span>(format: <span class="string">"jhed == %@"</span>, jhed)
+    
+    <span class="keyword">let</span> schoolClassRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">CourseClassEntity</span>&gt; = <span class="type">CourseClassEntity</span>.<span class="call">fetchRequest</span>()
+    schoolClassRequest.<span class="property">predicate</span> = <span class="type">NSPredicate</span>(format: <span class="string">"courseClassName == %@"</span>, courseClassName)
+    <span class="keyword">do</span> {
+      <span class="keyword">let</span> teacher = <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">fetch</span>(teacherRequest).<span class="property">first</span>!
+      <span class="keyword">let</span> courseClass = <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">fetch</span>(schoolClassRequest).<span class="property">first</span>!
+      <span class="comment">//adds this course class to the teacher's "activelyTeaching" array</span>
+      teacher.<span class="call">addToActivelyTeaching</span>(courseClass)
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">save</span>()
+    } <span class="keyword">catch</span> {
+      <span class="call">print</span>(<span class="string">"Assignment of teacher to class failed"</span>)
+    }
+  }
+</code></pre><p>Now we can add the following to the <code>loadAllDatabaseData()</code> method to make a connection:</p><pre><code><span class="call">assign</span>(teacher: <span class="string">"rsteele3"</span>, toCourseClass: <span class="type">Courses</span>.<span class="type">Fall2022_605_687</span>.<span class="property">rawValue</span>)
+</code></pre><p>Now with our new model in hand, where will we use it? Well, we already referenced it in files like <code>Teacher+CoreData.swift</code> when defining the extension. The one other place we need to add it is in the <code>LoginScreen</code>'s else block where we originally used the design model to populate the <code>ContentView</code>. Replace that with code to initialize the core data model and make a <code>ContentView</code> with that model</p><pre><code>       <span class="keyword">let</span> dataModel = <span class="type">ClassAssignmentsCoreDataModel</span>()
+      dataModel.<span class="call">loadAllDatabaseData</span>()
+      <span class="keyword">return</span> <span class="type">AnyView</span>(<span class="type">ContentView</span>(model: dataModel))
+</code></pre><p>Other places are in the other SwiftUI views which we'll define after we talk about some improvements to SwiftUI that helps us with working with Core Data.<br><br></p><p style="float: left">Previous:  <A HREF="../08-StoringAndFetching/index.html">Storing and Fetching</A></p><p style="float: right">Next:  <A HREF="../10-SwiftUIImprovements/index.html" class="nextModule">SwiftUI Improvements</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

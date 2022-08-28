@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week02/09-TheSwiftUIEnvironment"/><meta name="twitter:url" content="https://hococoder.com/posts/Week02/09-TheSwiftUIEnvironment"/><meta name="og:url" content="https://hococoder.com/posts/Week02/09-TheSwiftUIEnvironment"/><title>Week 2 - The SwiftUI Environment | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 2 - The SwiftUI Environment | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 2 - The SwiftUI Environment | Mobile Application Development for the iOS Platform"/><meta name="description" content="An introduction to the Combine framework."/><meta name="twitter:description" content="An introduction to the Combine framework."/><meta name="og:description" content="An introduction to the Combine framework."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 2 - The SwiftUI Environment</h1><p style="float: left">Previous:  <A HREF="../08-SwiftUIState/index.html">SwiftUI State</A></p><p style="float: right">Next:  <A HREF="../10-TheAppLifecycle/index.html" class="nextModule">The App Lifecycle</A></p><BR/><BR/><h2>Overview</h2><p>While it is possible to pass objects between views in SwiftUI, it is also possible to inject values into what is called the SwiftUI Environment. This environment is accessible to all of the views in the current view hierarchy, and can be accessed in a few different ways.</p><h2>Using @Environment and Keypaths</h2><p>The Environment comes with a set of predefined keypaths (seen <a href="https://developer.apple.com/documentation/swiftui/environmentvalues">here</a> as part of the <code>EnvironmentValues</code> struct) that can be used to read to and write keys from the environment. Here are a few examples</p><pre><code><span class="keyword">struct</span> ContentView: <span class="type">View</span> {
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">Text</span>(<span class="string">"Hello World!"</span>)
+  }
+}
+
+<span class="keyword">struct</span> ContentView_Previews: <span class="type">PreviewProvider</span> {
+  
+  <span class="keyword">@State private static var</span> isEditing: <span class="type">EditMode</span> = <span class="type">EditMode</span>.<span class="property">inactive</span>
+  
+  <span class="keyword">static var</span> previews: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">ContentView</span>()
+      .<span class="call">environment</span>(\.<span class="property">lineSpacing</span>, <span class="number">10</span>)   <span class="comment">//sets the distance in points between the bottom of one line fragment and the next</span>
+      .<span class="call">environment</span>(\.<span class="property">allowsTightening</span>, <span class="keyword">true</span>)  <span class="comment">//indicates that if needed, inter-character spacing can be tightened to fit</span>
+      .<span class="call">environment</span>(\.<span class="property">editMode</span>, <span class="property">$isEditing</span>)    <span class="comment">//indicates that the user can edit the contents of a view associated with this environment</span>
+  }
+}
+</code></pre><p>If I wanted to access those values in another view that was in <code>ContentView</code>'s hierarchy, I can simply access them by the same keyPaths:</p><pre><code><span class="keyword">struct</span> MyView: <span class="type">View</span> {
+
+  <span class="keyword">@Environment</span>(\.<span class="property">editMode</span>) <span class="keyword">var</span> editMode
+
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">Text</span>(<span class="string">"Hello Again!"</span>)
+  }
+}
+</code></pre><p>The <code>@Environment</code> property wrapper searches the environment for the property at the given keyPath and assigns it to the property you specify.<br><br>You can also make your own custom Environment keys - the documentation for <code>EnvironmentValues</code> shows you how:</p><pre><code><span class="keyword">private struct</span> MyEnvironmentKey: <span class="type">EnvironmentKey</span> {
+    <span class="keyword">static let</span> defaultValue: <span class="type">String</span> = <span class="string">"Default value"</span>
+}
+
+<span class="keyword">extension</span> <span class="type">EnvironmentValues</span> {
+    <span class="keyword">var</span> myCustomValue: <span class="type">String</span> {
+        <span class="keyword">get</span> { <span class="keyword">self</span>[<span class="type">MyEnvironmentKey</span>.<span class="keyword">self</span>] }
+        <span class="keyword">set</span> { <span class="keyword">self</span>[<span class="type">MyEnvironmentKey</span>.<span class="keyword">self</span>] = newValue }
+    }
+}
+
+<span class="keyword">extension</span> <span class="type">View</span> {
+    <span class="keyword">func</span> myCustomValue(<span class="keyword">_</span> myCustomValue: <span class="type">String</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="call">environment</span>(\.<span class="property">myCustomValue</span>, myCustomValue)
+    }
+}
+</code></pre><p>This code establishes a custom key, as well as a getter and setter for the key. In addition it provides an extension on <code>View</code> that makes a new modifier that allows you to set the value from your view.</p><h2>Using @EnvironmentObject</h2><p>You may want to share an <code>ObservableObject</code> into the view hierarchy. To do this, you can use the <code>environmentObject</code> modifier along with the <code>@EnvironmentObject</code> property wrapper, like this:</p><pre><code><span class="keyword">class</span> EmployeeModel: <span class="type">ObservableObject</span> {
+  <span class="comment">//....</span>
+}
+
+<span class="keyword">struct</span> ContactBook: <span class="type">App</span> {
+
+  <span class="keyword">@StateObject var</span> employeeModel: <span class="type">EmployeeModel</span> = <span class="type">EmployeeModel</span>()
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> {
+    <span class="type">WindowGroup</span> {
+      <span class="type">EmployeeView</span>()
+        .<span class="call">environmentObject</span>(employeeModel)
+    }
+  }
+}
+
+<span class="keyword">struct</span> EmployeeView: <span class="type">View</span> {
+  <span class="keyword">@EnvironmentObject var</span> employeeModel: <span class="type">EmployeeModel</span>
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">Text</span>(<span class="string">"Employees"</span>)
+  }
+}
+</code></pre><p>This code will cause SwiftUI to look through the environment, find an object of type <code>User</code> and assign it to <code>currentUser</code>. This complicates things a bit - you can't have more than one object of a given type in your environment if you are accessing it this way, so be careful.</p><p>Adding the model object this way will make it available to the view to which you inject it, as well as any child views. Don't forget to also add the model object to your preview canvas if you are using that to look at your views.</p><p>With all of this knowledge in hand, let's see how easy Xcode makes it for us to write a very functional app with only a small bit of code by adopting the <code>App</code> protocol. We'll look at that in the next module.</p><p style="float: left">Previous:  <A HREF="../08-SwiftUIState/index.html">SwiftUI State</A></p><p style="float: right">Next:  <A HREF="../10-TheAppLifecycle/index.html" class="nextModule">The App Lifecycle</A></p><BR/><BR/></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>

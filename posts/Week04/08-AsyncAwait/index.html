@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week04/08-AsyncAwait"/><meta name="twitter:url" content="https://hococoder.com/posts/Week04/08-AsyncAwait"/><meta name="og:url" content="https://hococoder.com/posts/Week04/08-AsyncAwait"/><title>Week 4 - Async/Await | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 4 - Async/Await | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 4 - Async/Await | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/test_ep_site/posts/Intro/About Me">AboutMe</a></li><li><a href="/test_ep_site/posts/Intro/Example App">ExampleApp</a></li><li><a href="/test_ep_site/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/test_ep_site/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/test_ep_site/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/test_ep_site/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/test_ep_site/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/test_ep_site/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/test_ep_site/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/test_ep_site/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/test_ep_site/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/test_ep_site/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/test_ep_site/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/test_ep_site/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/test_ep_site/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/test_ep_site/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/test_ep_site/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 4 - Async/Await</h1><p style="float: left">Previous:  <A HREF="../07-GCDQueuesExample/index.html">GCD and Operation Queues Example</A></p><p style="float: right">Next:  <A HREF="../09-IntroductionToCloudKit/index.html" class="nextModule">Introduction to CloudKit</A></p><BR/><BR/><center>
+<p class="suggestedReading">
+Suggested Reading: <BR/>
+<A HREF="https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html">Swift Concurrency</A><BR/>
+</p>
+</center><h2>Overview</h2><p>The examples we've seen for dealing with networking, for example, have been pretty straightforward, and not overly complex. But when you read them from top to bottom, the flow of the logic is sometimes hard to follow. Async/await can help straighten out the code and make things easier to read and maintain.</p><h2>Spaghetti Code</h2><p>For example, look at this block of code:</p><pre><code><span class="keyword">enum</span> DownloadError: <span class="type">Error</span> {
+  <span class="keyword">case</span> imageToData
+  <span class="keyword">case</span> downloadError
+  <span class="keyword">case</span> badURL
+}
+
+
+<span class="comment">//2</span>
+<span class="keyword">func</span> getProfilePicture(for name: <span class="type">String</span>, completion: <span class="keyword">@escaping</span> (<span class="type">UIImage</span>?, <span class="type">Error</span>?) -&gt; ()) {
+    <span class="keyword">let</span> sharedSession = <span class="type">URLSession</span>.<span class="property">shared</span>
+    sharedSession.<span class="property">configuration</span>.<span class="property">allowsCellularAccess</span> = <span class="keyword">false
+    let</span> defaultConfiguration = <span class="type">URLSessionConfiguration</span>.<span class="property">default</span>
+    <span class="keyword">let</span> defaultSession = <span class="type">URLSession</span>(configuration: defaultConfiguration)
+
+    <span class="keyword">guard let</span> url = <span class="type">URL</span>(string: <span class="string">"http://159.203.191.136/</span>\(name)<span class="string">.png"</span>) <span class="keyword">else</span> {
+      <span class="comment">//3</span>
+      <span class="call">completion</span>(<span class="keyword">nil</span>, <span class="type">DownloadError</span>.<span class="property">badURL</span>)
+      <span class="call">fatalError</span>()
+    }
+
+    <span class="comment">//4</span>
+    <span class="keyword">let</span> task = defaultSession.<span class="call">dataTask</span>(with: url) { data, response, error <span class="keyword">in</span>
+
+      <span class="comment">//first, check the http response code to make sure we got an OK (200-299) response
+      //5</span>
+      <span class="keyword">guard let</span> httpResponse = response <span class="keyword">as</span>? <span class="type">HTTPURLResponse</span>,
+        (<span class="number">200</span>..&lt;<span class="number">300</span>).<span class="call">contains</span>(httpResponse.<span class="property">statusCode</span>) <span class="keyword">else</span> {
+          <span class="call">completion</span>(<span class="keyword">nil</span>, <span class="type">DownloadError</span>.<span class="property">downloadError</span>)
+          <span class="keyword">return</span>
+      }
+
+       <span class="comment">//then check to make sure the data is not nil</span>
+       <span class="keyword">guard let</span> data = data <span class="keyword">else</span> {
+         <span class="keyword">return</span>
+       }
+
+      <span class="comment">//finally grab the data and build an image from it
+      //6</span>
+      <span class="keyword">if let</span> result = <span class="type">UIImage</span>(data: data) {
+        <span class="call">print</span>(<span class="string">"Downloaded the image!"</span>)
+        <span class="call">completion</span>(result, <span class="keyword">nil</span>)
+      }
+      <span class="keyword">else</span> {
+        <span class="call">completion</span>(<span class="keyword">nil</span>, <span class="type">DownloadError</span>.<span class="property">imageToData</span>)
+      }
+   }
+   <span class="comment">//7</span>
+   task.<span class="call">resume</span>()
+}
+
+<span class="keyword">var</span> myImage: <span class="type">UIImage</span>?
+
+<span class="comment">//1</span>
+<span class="call">getProfilePicture</span>(for: <span class="string">"Josh"</span>, completion: { image, error <span class="keyword">in</span>
+
+  <span class="comment">//8</span> 
+  <span class="keyword">guard</span> error != <span class="keyword">nil else</span> { <span class="keyword">return</span> }
+  <span class="call">print</span>(<span class="string">"image is</span> \(image)<span class="string">"</span>)
+  myImage = image
+
+})
+
+</code></pre><p>Let's try to walk through these code in order, and identify some problems:</p><ol><li>Here is where the method <code>getProfilePicture</code> is called. It includes a completion block, whose code is called somewhere in the body of <code>getProfilePicture</code></li><li>Speaking of which, this is the function signature of <code>getProfilePicture</code>. It takes in 2 arguments: the name of the person, and a closure which is invoked in the body. That completion block takes in 2 arguments - an optional UIImage and an optional Error, and returns Void.</li><li>Here is the first of many "outlets", or places where the control flow can leave this function. If the URL can't be properly constructed, the completion block is called with a nil image and an error.</li><li>Here is the meat of this function - the actually call to reach out to the network and fetch the data at the specified URL. Since this is asynchronous (we don't know how long it will take to finish), we have to handle it with yet another completion handler that is called by the system when the data - or an error - is returned.</li><li>Here is another potential outlet - if the response code is not in the correct range, the completion is again thrown with an error</li><li>The conversion of the data to a <code>UIImage</code> is another outlet, which can either return the created image, or a <code>DownloadError</code></li><li>The <code>dataTask</code> has to be resumed for it to start</li><li>Inside the original completion block, the error is checked, and if things are good, the image is set to an external variable.<ul></ul></li></ol><p>Whew. That was a long and winding road. Wouldn't it be great if we could just tell the OS what to wait for, and let it handle all the special cases for us? Let's see how async/await helps us do that.</p><h2>Using Async/Await</h2><p>In iOS 15, 2 new keywords were added - <code>async</code> and <code>await</code>:</p><ul><li><code>async</code> is used to tell the system that a function or block of code is asynchronous, and can be spawned off to another thread</li><li><code>await</code> is used to tell the system that the current thread should wait here until all of the <code>async</code> components have returned (think of this as a GCD dependency from last module)</li></ul><p>Let's build a new function with <code>async</code> and <code>await</code> to try to not only reduce the amount of code we use, but make the code easier to read as we read down the page:</p><p>Start by declaring the function signature (see the EPExampleApp page for this section to see this code in a playground):</p><pre><code><span class="keyword">func</span> getAsyncProfilePicture(for name: <span class="type">String</span>) <span class="keyword">async throws</span> -&gt; <span class="type">UIImage</span>? {
+</code></pre><p>This function signature is simplified - only taking in the name for arguments, and returns an optional <code>UIImage</code>. It has two additional keywords that the previous function did not have <code>async</code> and <code>throws</code>. <code>throws</code> is one we're familiar with; it means this function - specifically something in the body - may throw an exception. We haven't seen <code>async</code> however - this indicates to the compiler that this function will contain code segments that themselves will be <code>async</code>, and will be handed off to background threads to perform their work. Next is the set of code that sets up the <code>URLSession</code>, just like in the previous function:</p><pre><code>  <span class="keyword">let</span> defaultConfiguration = <span class="type">URLSessionConfiguration</span>.<span class="property">default</span>
+ <span class="keyword">let</span> defaultSession = <span class="type">URLSession</span>(configuration: defaultConfiguration)
+</code></pre><p>Next, there is a mostly unchanged declaration of the <code>url</code> property, except the <code>else</code> clause no longer calls the completion handler - it just throws an error.</p><pre><code>  <span class="keyword">guard let</span> url = <span class="type">URL</span>(string: <span class="string">"http://159.203.191.136/</span>\(name)<span class="string">.png"</span>) <span class="keyword">else</span> {
+    <span class="keyword">throw</span> <span class="type">DownloadError</span>.<span class="property">badURL</span>
+  }
+</code></pre><p>Then, let's make a <code>URLRequest</code> with the given <code>url</code>, which at this point we know was successful since the error wasn't thrown:</p><pre><code>  <span class="keyword">let</span> request = <span class="type">URLRequest</span>(url: url)
+</code></pre><p>Now, let's use a new (to iOS 15) function on the <code>defaultSession</code> property called <code>.data(for:)</code>.</p><pre><code>  <span class="keyword">let</span> (data, response) = <span class="keyword">try await</span> defaultSession.<span class="call">data</span>(for: request)
+</code></pre><p>This takes in the <code>request</code> we made above, and asynchronously calls it. Therefore we <code>await</code> for it to finish; also, since it can throw an error, we have to call <code>try</code>, so we actually end up calling <code>try await</code>. This function returns a tuple - the <code>data</code> and the <code>response</code>. Notice how there is no error returned here, like there was in the other function's completion block (item 4 in the above function)? This is because if an error is encountered, it is simply thrown, leaving us with actual workable values - the <code>data</code> and <code>response</code>. No messy closures to deal with!</p><p>Next examine the response as we did before, but if a failure case is met, simply throw the error.</p><pre><code>  <span class="keyword">guard let</span> httpResponse = response <span class="keyword">as</span>? <span class="type">HTTPURLResponse</span>,
+    (<span class="number">200</span>..&lt;<span class="number">300</span>).<span class="call">contains</span>(httpResponse.<span class="property">statusCode</span>) <span class="keyword">else</span> {
+      <span class="keyword">throw</span> <span class="type">DownloadError</span>.<span class="property">downloadError</span>
+  }
+</code></pre><p>Finally, make the image from the data, and remove it.</p><pre><code>  <span class="keyword">let</span> result = <span class="type">UIImage</span>(data: data)
+
+  <span class="keyword">return</span> result
+}
+</code></pre><p>Here's the final version of the code</p><pre><code><span class="keyword">func</span> getAsyncProfilePicture(for name: <span class="type">String</span>) <span class="keyword">async throws</span> -&gt; <span class="type">UIImage</span>? {
+
+  <span class="keyword">let</span> defaultConfiguration = <span class="type">URLSessionConfiguration</span>.<span class="property">default</span>
+  <span class="keyword">let</span> defaultSession = <span class="type">URLSession</span>(configuration: defaultConfiguration)
+
+  <span class="keyword">guard let</span> url = <span class="type">URL</span>(string: <span class="string">"http://159.203.191.136/</span>\(name)<span class="string">.png"</span>) <span class="keyword">else</span> {
+    <span class="keyword">throw</span> <span class="type">DownloadError</span>.<span class="property">badURL</span>
+  }
+
+  <span class="keyword">let</span> request = <span class="type">URLRequest</span>(url: url)
+
+  <span class="keyword">let</span> (data, response) = <span class="keyword">try await</span> defaultSession.<span class="call">data</span>(for: request)
+
+  <span class="keyword">guard let</span> httpResponse = response <span class="keyword">as</span>? <span class="type">HTTPURLResponse</span>,
+    (<span class="number">200</span>..&lt;<span class="number">300</span>).<span class="call">contains</span>(httpResponse.<span class="property">statusCode</span>) <span class="keyword">else</span> {
+      <span class="keyword">throw</span> <span class="type">DownloadError</span>.<span class="property">downloadError</span>
+  }
+
+  <span class="keyword">let</span> result = <span class="type">UIImage</span>(data: data)
+
+  <span class="keyword">return</span> result
+}
+</code></pre><p>This time around, we can actually read the function from top to bottom to see how the control flows. Session is setup, url is created, request is made, data is fetched, response is checked, image is made and returned. SO much easier!</p><p>But wait, how do we call this? <code>getAsyncProfilePicture</code> is <code>async</code>, which means it must be called from an <code>async</code> environment. Luckily, there is a new wrapper called <code>Task</code> that sets up an environment that can call <code>async</code> functions. For example:</p><pre><code><span class="type">Task</span> {
+  <span class="keyword">let</span> asyncImage = <span class="keyword">try await</span> <span class="call">getAsyncProfilePicture</span>(for: <span class="string">"Josh"</span>)
+  asyncImage
+}
+</code></pre><p>This block in your playground will run the function on a background thread, <code>await</code> for it to finish, and return the image, unless of course an error gets thrown (which you should handle with a do/catch). It will then display the image in the sidebar of the playground.</p><h2>Calling Parallel <code>async</code> functions</h2><p>The <code>async</code>/<code>await</code> functionality here plays on top of threads, but you don't use them directly. You can, however, think in a thread frame of mind when designing your code. For example. Let's say you wanted to download several profile pictures. Instead of downloading them serially, you want to use threads to download each one without having to wait for the others to finish. You might do it like this:</p><pre><code><span class="keyword">let</span> profilePic1 = <span class="keyword">await</span> <span class="call">getAsyncProfilePicture</span>(for: <span class="string">"Josh"</span>)
+<span class="keyword">let</span> profilePic2 = <span class="keyword">await</span> <span class="call">getAsyncProfilePicture</span>(for: <span class="string">"John"</span>)
+<span class="keyword">let</span> profilePic3 = <span class="keyword">await</span> <span class="call">getAsyncProfilePicture</span>(for: <span class="string">"Donna"</span>)
+</code></pre><p>This would work, but because you used <code>await</code>, this would still happen in series - the current thread would reach a potential pause point at each instance of <code>await</code>. Instead, declare the property as an <code>async</code> property, which will spawn each function call to its own background thread, and the <code>await</code> call below it</p><pre><code><span class="keyword">async let</span> profilePic1 = <span class="call">getAsyncProfilePicture</span>(for: <span class="string">"Josh"</span>)
+<span class="keyword">async let</span> profilePic2 = <span class="call">getAsyncProfilePicture</span>(for: <span class="string">"John"</span>)
+<span class="keyword">async let</span> profilePic3 = <span class="call">getAsyncProfilePicture</span>(for: <span class="string">"Donna"</span>)
+
+<span class="keyword">let</span> allProfilePics = <span class="keyword">await</span> [profilePic1, profilePic2, profilePic3]
+</code></pre><h2>Actors</h2><p><code>actor</code>s are class-like reference types that only allow one task to access their mutable state at a time. Here's a student <code>actor</code> that has a private gpa property:</p><pre><code><span class="keyword">actor</span> Student {
+  <span class="keyword">let</span> name: <span class="type">String</span>
+  <span class="keyword">let</span> major: <span class="type">String</span>
+  <span class="keyword">let</span> grades: [<span class="type">Double</span>]
+  <span class="keyword">private(set) var</span> gpa: <span class="type">Double</span>
+
+  <span class="keyword">init</span>(name: <span class="type">String</span>, major: <span class="type">String</span>, grades: [<span class="type">Double</span>]) {
+    <span class="keyword">self</span>.<span class="property">name</span> = name
+    <span class="keyword">self</span>.<span class="property">major</span> = major
+    <span class="keyword">self</span>.<span class="property">grades</span> = grades
+    <span class="keyword">self</span>.<span class="property">gpa</span> = <span class="call">calculateGPA</span>(<span class="keyword">self</span>.<span class="property">grades</span>)
+  }
+
+}
+</code></pre><p><code>actor</code>s are made just like classes:</p><pre><code><span class="keyword">let</span> johnsmith = <span class="type">Student</span>(name: <span class="string">"John Smith"</span>, major: <span class="string">"Computer Science"</span>, grades: [<span class="number">4.0</span>, <span class="number">3.0</span>])
+<span class="call">print</span>(await johnsmith.<span class="property">gpa</span>)
+<span class="comment">//prints 3.5</span>
+</code></pre><p>Since the system has to check to see if you can access <code>johnsmith</code> before asking for its <code>gpa</code> property, <code>johnsmith.gpa</code> is a potential suspension point, so you must <code>await</code> it.</p><h2><code>@MainActor</code></h2><p>When dealing with background threads and the user interface, you always have to make sure send your UI updates back to the main thread. This can be done with a call to <code>DispatchQueue.main.async</code>, but it can be error-prone and hard to maintain. To help with this, SwiftUI elements are now decorated with the <code>@MainActor</code> property wrapper in their declarations, which mean that all properties and methods on those types will be called on the main queue. For example:</p><pre><code><span class="keyword">func</span> loadJohnSmith() {
+
+  <span class="type">Task</span> {
+    <span class="keyword">let</span> johnsmith = <span class="type">Student</span>(name: <span class="string">"John Smith"</span>, major: <span class="string">"Computer Science"</span>, grades: [<span class="number">4.0</span>, <span class="number">3.0</span>])
+    nameLabel.<span class="property">text</span> = <span class="keyword">await</span> johnsmith.<span class="property">name</span>
+  }
+}
+
+</code></pre><p><code>Task</code>, as you saw above, sets up an environment that run blocks of code on background threads. Here, even though <code>nameLabel</code> is updating the UI, there is no need to dispatch to the main queue, because the system does it for you.</p><p>You can also use the <code>@MainActor</code> property wrapper in your own custom types, if they use Swift Concurrency. For example:</p><pre><code><span class="keyword">@MainActor class</span> ClassRosterViewModel: <span class="type">ObservableObject</span> {
+
+  <span class="keyword">@Published</span> students: [<span class="type">Student</span>]
+
+  <span class="keyword">func</span> loadStudents() {
+    <span class="type">Task</span> {
+      students = <span class="keyword">try await</span> <span class="call">loadStudentsFromDatabase</span>()
+    }
+  }
+
+}
+</code></pre><p>This will cause the <code>@Published</code> <code>students</code> property to get assigned on the main queue, which will make them easier to update in SwiftUI.</p><h2>Building on the Operation Queues example</h2><p>I've added a "fourthWay" function to the example from the earlier module (GCD Queues Example) that uses async/await:</p><pre><code><span class="keyword">func</span> fourthWay() <span class="keyword">async</span> {
+
+    <span class="keyword">async let</span> operation1 = <span class="type">MyAsyncTextViewOperation</span>(string: <span class="property">$text1String</span>)
+    <span class="keyword">async let</span> operation2 = <span class="type">MyAsyncTextViewOperation</span>(string: <span class="property">$text2String</span>)
+    <span class="keyword">async let</span> operation3 = <span class="type">MyAsyncTextViewOperation</span>(string: <span class="property">$text3String</span>)
+    <span class="keyword">async let</span> operation4 = <span class="type">MyAsyncTextViewOperation</span>(string: <span class="property">$text4String</span>)
+
+    <span class="keyword">let</span> operations = <span class="keyword">await</span> [operation1, operation2, operation3, operation4]
+    <span class="call">print</span>(<span class="string">"All operations done, count</span> \(operations.<span class="property">count</span>)<span class="string">!"</span>)
+  }
+}
+</code></pre><p>And I've added a new operation the uses async/await</p><pre><code><span class="keyword">class</span> MyAsyncTextViewOperation {
+
+  <span class="keyword">@Binding var</span> string: <span class="type">String</span>
+
+  <span class="keyword">init</span>(string: <span class="type">Binding</span>&lt;<span class="type">String</span>&gt;) <span class="keyword">async</span>
+  {
+    _string = string
+    <span class="keyword">for</span> l <span class="keyword">in</span> <span class="number">0</span> ..&lt; <span class="number">5</span>
+    {
+      <span class="call">print</span>(<span class="string">"l is</span> \(l)<span class="string">"</span>)
+      <span class="keyword">self</span>.<span class="property">string</span> = <span class="string">"Processing Index</span> \(l)<span class="string">"</span>
+      <span class="keyword">await</span> <span class="type">Task</span>.<span class="call">sleep</span>(<span class="number">1</span>)
+
+    }
+  }
+}
+</code></pre><p>If you make the button call "fourthWay()", and run it in the simulator, you'll see that the operation completes very quickly - each operation creation is spawned to a new thread thanks to <code>async</code> being in front of the property declaration, and <code>await</code> is added to the collection of operations below.</p><h2>Conclusion</h2><p><code>async</code>, <code>await</code>, <code>Task</code>, <code>actor</code> and <code>@MainActor</code> are brand new to iOS 15, and are already greatly changing how iOS developers deal with background processes and updating their UI elements to keep them in sync.</p><p style="float: left">Previous:  <A HREF="../07-GCDQueuesExample/index.html">GCD and Operation Queues Example</A></p><p style="float: right">Next:  <A HREF="../09-IntroductionToCloudKit/index.html" class="nextModule">Introduction to CloudKit</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2022, 9:26 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>
