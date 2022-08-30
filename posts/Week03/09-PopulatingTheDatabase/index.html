@@ -11,7 +11,7 @@
   <span class="keyword">var</span> teachers: [<span class="type">Teacher</span>] { <span class="keyword">return</span> [] }
 </code></pre><p>To get access to the method that our “Use Core Data” option gave us when we created the project, we need to get a hold of the context from our shared <code>PersistenceController</code> struct - remember that’s the scratch space we’ll use to setup our object before saving them to the database. Note that we can't use the context we injected into the SwiftUI Environment since this isn't a SwiftUI view.</p><pre><code>   <span class="keyword">static var</span> context = <span class="type">PersistenceController</span>.<span class="property">shared</span>.<span class="property">container</span>.<span class="property">viewContext</span>
   <span class="keyword">let</span> classAssignmentTestData = <span class="type">ClassAssignmentsModelTestData</span>()
-</code></pre><h2>Deleting Previous Entries</h2><p>Now let's define some methods to empty and load the database. Make a new method called <code>emptyDB()</code>. We'll use this in between runs of the app to make sure we're starting from scratch and to avoid duplicated data. This uses a different technique from what we discussed in the last module, where we walked through each element and deleted it, and instead uses <code>NSBatchDeleteRequest</code> to delete all the values returned from a <code>NSFetchRequest</code>.</p><p>For each type (except for <code>StudentEntity</code>, which you'll do as part of your homework), make a fetch request. Recall that the class that Core Data auto generates makes a <code>fetchRequest()</code> method for you, which you can call here. With that fetch request in hand, you can make a <code>NSBatchDeleteRequest</code>, which takes in the fetch request you just generated.</p><pre><code><span class="keyword">func</span> emptyDB() {
+</code></pre><h2>Deleting Previous Entries</h2><p>Now let's define some methods to empty and load the database. Make a new method called <code>emptyDB()</code>. We'll use this in between runs of the app to make sure we're starting from scratch and to avoid duplicated data. This uses a different technique from what we discussed in the last module, where we walked through each element and deleted it, and instead uses <code>NSBatchDeleteRequest</code> to delete all the values returned from a <code>NSFetchRequest</code>.</p><p>For each type, make a fetch request. Recall that the class that Core Data auto generates makes a <code>fetchRequest()</code> method for you, which you can call here. With that fetch request in hand, you can make a <code>NSBatchDeleteRequest</code>, which takes in the fetch request you just generated.</p><pre><code><span class="keyword">func</span> emptyDB() {
     
     <span class="keyword">let</span> teacherFetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">TeacherEntity</span>.<span class="call">fetchRequest</span>()
     <span class="keyword">let</span> teacherDeleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: teacherFetchRequest)
@@ -21,22 +21,26 @@
     
     <span class="keyword">let</span> assignmentsFetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">AssignmentEntity</span>.<span class="call">fetchRequest</span>()
     <span class="keyword">let</span> assignmentsDeleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: assignmentsFetchRequest)
+    
+    <span class="keyword">let</span> studentsFetchRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">NSFetchRequestResult</span>&gt; = <span class="type">StudentEntity</span>.<span class="call">fetchRequest</span>()
+    <span class="keyword">let</span> studentsDeleteRequest = <span class="type">NSBatchDeleteRequest</span>(fetchRequest: studentsFetchRequest)
 </code></pre><p>To make the request go through, you can use the context's execute method, passing in each of the delete requests. Since these operations may throw errors, don't forget to wrap the attempts with a do/catch block.</p><pre><code>     <span class="keyword">do</span> {
       <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">execute</span>(teacherDeleteRequest)
       <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">execute</span>(classesDeleteRequest)
       <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">execute</span>(assignmentsDeleteRequest)
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">execute</span>(studentsDeleteRequest)
     } <span class="keyword">catch let</span> error <span class="keyword">as</span> <span class="type">NSError</span> {
       <span class="call">print</span>(<span class="string">"error during deletion</span> \(error.<span class="property">localizedDescription</span>)<span class="string">"</span>)
     }
   }
-</code></pre><h2>Populating the Database</h2><p>Now let's populate the database. First, make a <code>loadAllDatabaseData</code> method (again, excluding the <code>Student</code> type, you'll do that for homework)</p><pre><code>   <span class="keyword">func</span> loadAllDatabaseData()
+</code></pre><h2>Populating the Database</h2><p>Now let's populate the database. First, make a <code>loadAllDatabaseData</code> method:</p><pre><code>   <span class="keyword">func</span> loadAllDatabaseData()
   {
     <span class="call">emptyDB</span>()
     
     <span class="call">loadTeacherDatasetFrom</span>()
     <span class="call">loadAssignmentDatasetFrom</span>()
     <span class="call">loadCourseClassesDatasetFrom</span>()
-
+    <span class="call">loadStudentsDatasetFrom</span>(<span class="number">0</span>)
   }
 </code></pre><p>Then make a method for each type to make database entries from the JSON model that we already have. We can take advantage of the <code>convertToManagedObject</code> method we wrote earlier to convert each of the JSON based entries into a <code>NSManagedObject</code> object, saving the context when we're done with the <code>save()</code> method.</p><pre><code>   <span class="keyword">func</span> loadTeacherDatasetFromJSON() {
     
@@ -45,6 +49,21 @@
     }
     
     teachers.<span class="call">forEach</span>({ teacher <span class="keyword">in _</span> = teacher.<span class="call">convertToManagedObject</span>() })
+    
+    <span class="keyword">do</span> {
+      <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">save</span>()
+    } <span class="keyword">catch</span> {
+      <span class="call">print</span>(<span class="string">"Error saving teacher to core data</span> \(error)<span class="string">"</span>)
+    }
+  }
+  
+  <span class="keyword">func</span> loadStudentDatasetFromJSON() {
+    
+    <span class="keyword">guard let</span> students = classAssignmentTestData.<span class="property">students</span> <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="call">print</span>(<span class="string">"Error loading students"</span>)
+    }
+    
+    students.<span class="call">forEach</span>({ student <span class="keyword">in _</span> = student.<span class="call">convertToManagedObject</span>() })
     
     <span class="keyword">do</span> {
       <span class="keyword">try</span> <span class="type">ClassAssignmentsCoreDataModel</span>.<span class="property">context</span>.<span class="call">save</span>()
@@ -109,7 +128,7 @@
       <span class="keyword">return nil</span>
     }
   }
-</code></pre><p>Now since we can get values, we also need to establish relationships between objects, where applicable. We'll define the <code>Teacher</code> to <code>CourseClass</code> relationship here, and you'll define the ones for the student in your homework assignment. Here, we have to use the information passed into the method to grab the appropriate objects from the database (like the get method above) and then again take advantage of the auto-generated code from CoreData. <code>addToActivelyTeaching</code> will assign the class to the teacher's "activelyTeaching" set. Calling save pushes the relationship to the database.</p><pre><code>   <span class="keyword">func</span> assign(teacher jhed: <span class="type">String</span>, toCourseClass courseClassName: <span class="type">String</span>)
+</code></pre><p>Now since we can get values, we also need to establish relationships between objects, where applicable. We'll define the <code>Teacher</code> to <code>CourseClass</code> relationship here. Here, we have to use the information passed into the method to grab the appropriate objects from the database (like the get method above) and then again take advantage of the auto-generated code from CoreData. <code>addToActivelyTeaching</code> will assign the class to the teacher's "activelyTeaching" set. Calling save pushes the relationship to the database.</p><pre><code>   <span class="keyword">func</span> assign(teacher jhed: <span class="type">String</span>, toCourseClass courseClassName: <span class="type">String</span>)
   {
     <span class="keyword">let</span> teacherRequest: <span class="type">NSFetchRequest</span>&lt;<span class="type">TeacherEntity</span>&gt; = <span class="type">TeacherEntity</span>.<span class="call">fetchRequest</span>()
     teacherRequest.<span class="property">predicate</span> = <span class="type">NSPredicate</span>(format: <span class="string">"jhed == %@"</span>, jhed)
@@ -130,4 +149,4 @@
 </code></pre><p>Now with our new model in hand, where will we use it? Well, we already referenced it in files like <code>Teacher+CoreData.swift</code> when defining the extension. The one other place we need to add it is in the <code>LoginScreen</code>'s else block where we originally used the design model to populate the <code>ContentView</code>. Replace that with code to initialize the core data model and make a <code>ContentView</code> with that model</p><pre><code>       <span class="keyword">let</span> dataModel = <span class="type">ClassAssignmentsCoreDataModel</span>()
       dataModel.<span class="call">loadAllDatabaseData</span>()
       <span class="keyword">return</span> <span class="type">AnyView</span>(<span class="type">ContentView</span>(model: dataModel))
-</code></pre><p>Other places are in the other SwiftUI views which we'll define after we talk about some improvements to SwiftUI that helps us with working with Core Data.<br><br></p><p style="float: left">Previous:  <A HREF="../08-StoringAndFetching/index.html">Storing and Fetching</A></p><p style="float: right">Next:  <A HREF="../10-SwiftUIImprovements/index.html" class="nextModule">SwiftUI Improvements</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 28, 2022, 2:14 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>
+</code></pre><p>Other places are in the other SwiftUI views which we'll define after we talk about some improvements to SwiftUI that helps us with working with Core Data.<br><br></p><p style="float: left">Previous:  <A HREF="../08-StoringAndFetching/index.html">Storing and Fetching</A></p><p style="float: right">Next:  <A HREF="../10-SwiftUIImprovements/index.html" class="nextModule">SwiftUI Improvements</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 29, 2022, 9:45 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>
