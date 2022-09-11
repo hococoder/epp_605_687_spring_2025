@@ -24,9 +24,8 @@
     }
   }
 }
+
 ```
-
-
 ## Making a `EnrolledCourseClassView`
 
 Now for the enrolled list. 
@@ -55,7 +54,7 @@ For both of these, don't forget to make the proper queries to the database to ge
 Finally, we can update our `CoreDataView`'s `TabView` a bit.  We'll still use `CourseClassView` for now (later you'll replace this with `EnrolledCourseClassView`), but we'll pass in the first school class from the database (using the `CourseClass` struct's init method to turn it into a `CourseClass` struct). 
 
 For the `AssignmentsView`, again pull from the database, and use the map method to convert each of the retrieved `AssignmentEntity` objects to `Assignment` objects via the `Assignment` initializer.
-
+s
 For the `TeacherView`, build a `Teacher` object from the first teacher in the database. 
 
 For each of the tabs we'll also add an `Image` using Apple's SFSymbols library - see the additions to the `tabItem` closure. 
@@ -120,4 +119,4 @@ In the programming assignment, you'll finishing wiring things up to move it to a
 
 <p style="float: left">Previous:  <A HREF="../10-SwiftUIImprovements/index.html">SwiftUI Improvements</A></p>
 <p style="float: right">Next:  <A HREF="../../Week04/00-Week04Overview/index.html">Week 4 Overview</A></p>
-</p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 29, 2022, 9:45 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>
+</p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2022-2023 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated September 11, 2022, 5:43 PM</p><p><a href="https://twitter.com/hococoder" target="_blank">My Twitter</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://blackboard.jhu.edu" target="_blank">JHU Blackboard</a></p></footer></body></html>
