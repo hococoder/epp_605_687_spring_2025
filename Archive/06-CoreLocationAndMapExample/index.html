@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/Archive/06-CoreLocationAndMapExample"/><meta name="twitter:url" content="https://hococoder.com/Archive/06-CoreLocationAndMapExample"/><meta name="og:url" content="https://hococoder.com/Archive/06-CoreLocationAndMapExample"/><title>Week 5 - Core Location and Map Example | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 5 - Core Location and Map Example | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 5 - Core Location and Map Example | Mobile Application Development for the iOS Platform"/><meta name="description" content="A description of my first post."/><meta name="twitter:description" content="A description of my first post."/><meta name="og:description" content="A description of my first post."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/epp_605_687_fall_2022/posts/Intro/About Me">AboutMe</a></li><li><a href="/epp_605_687_fall_2022/posts/Intro/Example App">ExampleApp</a></li><li><a href="/epp_605_687_fall_2022/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/epp_605_687_fall_2022/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/epp_605_687_fall_2022/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/epp_605_687_fall_2022/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/epp_605_687_fall_2022/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/epp_605_687_fall_2022/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/epp_605_687_fall_2022/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/epp_605_687_fall_2022/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/epp_605_687_fall_2022/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/epp_605_687_fall_2022/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/epp_605_687_fall_2022/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/epp_605_687_fall_2022/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/epp_605_687_fall_2022/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/epp_605_687_fall_2022/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/epp_605_687_fall_2022/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 5 - Core Location and Map Example</h1><p style="float: left">Previous:  <A HREF="../05-IntroductionToCoreLocation/index.html">Introduction to Core Location</A></p><p style="float: right">Next:  <A HREF="../07-WrappingUIViews/index.html" class="nextModule">Wrapping UIViews</A></p><BR/><BR/><h2>CoreLocation in Action</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_7kc2517h/?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_7kc2517h/&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>Let’s put together a small example showing how to grab some location data from the Core Location framework. Make a new SwiftUI view called <code>CoreLocationView</code>. Don't forget to import <code>CoreLocation</code>, <code>MapKit</code>, and <code>Combine</code>.</p><pre><code><span class="keyword">import</span> SwiftUI
+<span class="keyword">import</span> Combine
+<span class="keyword">import</span> CoreLocation
+<span class="keyword">import</span> MapKit
+
+<span class="comment">//MARK: - CORE LOCATION</span>
+<span class="keyword">struct</span> CoreLocationView: <span class="type">View</span> {
+</code></pre><p>We want to show a map with some <code>CoreLocation</code> based information under it. From the last module we know we need <code>@State</code> properties - add those, as well as a <code>LocationManager</code> which we will define shortly</p><pre><code>  <span class="keyword">@State private var</span> userTrackingMode: <span class="type">MapUserTrackingMode</span> = <span class="type">MapUserTrackingMode</span>.<span class="property">follow</span>
+  <span class="keyword">@State private var</span> region: <span class="type">MKCoordinateRegion</span> = <span class="type">MKCoordinateRegion</span>()
+  <span class="keyword">@ObservedObject private var</span> locationManager: <span class="type">LocationManager</span> = <span class="type">LocationManager</span>()
+</code></pre><p>Initialize the region based on the current coordinate of the <code>LocationManager</code></p><pre><code>  <span class="keyword">init</span>() {
+    <span class="keyword">self</span>.<span class="property">region</span> = <span class="type">MKCoordinateRegion</span>(center: locationManager.<span class="property">location</span>.<span class="property">coordinate</span>, latitudinalMeters: <span class="number">300</span>, longitudinalMeters: <span class="number">300</span>)
+  }
+</code></pre><p>For the body, let's just display the map for now - we'll add some more information in a bit:</p><pre><code><span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+  
+    <span class="type">Map</span>(coordinateRegion: <span class="property">$region</span>, interactionModes: [.<span class="dotAccess">all</span>], showsUserLocation: <span class="keyword">true</span>, userTrackingMode: <span class="property">$userTrackingMode</span>)
+
+}
+</code></pre><p>Next let's define the <code>LocationManager</code> that was used above. This will act as a publisher of the current location by making it adopt <code>ObservableObject</code></p><pre><code><span class="keyword">class</span> LocationManager: <span class="type">NSObject</span>, <span class="type">ObservableObject</span>, <span class="type">CLLocationManagerDelegate</span> {
+</code></pre><p>Define a location manager, and initialize it.</p><pre><code>  <span class="keyword">let</span> locationManager = <span class="type">CLLocationManager</span>()
+</code></pre><p>Then, because <code>ObservableObject</code> needs at least one <code>@Published</code> property, define a <code>CLLocation</code> property that will publish the latest location from the manager.</p><pre><code>  <span class="keyword">@Published var</span> location: <span class="type">CLLocation</span> = <span class="type">CLLocation</span>()
+</code></pre><p>Make an <code>init</code> method that sets the <code>locationManager</code>'s delegate to <code>self</code>, sets the desired accuracy, asks for permission to get location information in case it wasn't already asked, and then start updating the location.</p><pre><code>  <span class="keyword">override init</span>() {
+    <span class="keyword">super</span>.<span class="keyword">init</span>()
+    <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">delegate</span> = <span class="keyword">self</span>;
+    <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">desiredAccuracy</span> = kCLLocationAccuracyBest
+    <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="call">requestWhenInUseAuthorization</span>()
+    <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="call">startUpdatingLocation</span>()
+  }
+</code></pre><p>Finally, implement a <code>locationManager</code> delegate method to take any updated locations and respond to them accordingly. Here, we are setting the location property for the class so it can get published.</p><pre><code>  <span class="keyword">func</span> locationManager(<span class="keyword">_</span> manager: <span class="type">CLLocationManager</span>, didUpdateLocations locations: [<span class="type">CLLocation</span>]) {
+      <span class="keyword">guard let</span> location = locations.<span class="property">last</span> <span class="keyword">else</span> { <span class="keyword">return</span> }
+      <span class="keyword">self</span>.<span class="property">location</span> = location
+  }
+}
+</code></pre><p>Now let's display some information below the map. Make a new view called <code>LocationInformation</code></p><pre><code><span class="keyword">struct</span> LocationInformation: <span class="type">View</span> {
+  
+  <span class="keyword">@StateObject var</span> locationManager: <span class="type">LocationManager</span>
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">VStack</span> {
+      <span class="type">HStack</span>{
+        <span class="type">Text</span>(<span class="string">"Latitude"</span>)
+        <span class="type">Spacer</span>()
+        <span class="type">Text</span>(<span class="string">"</span>\(<span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">coordinate</span>.<span class="property">latitude</span>)<span class="string">"</span>)
+      }
+      <span class="type">HStack</span>{
+        <span class="type">Text</span>(<span class="string">"Longitude"</span>)
+        <span class="type">Spacer</span>()
+        <span class="type">Text</span>(<span class="string">"</span>\(<span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">coordinate</span>.<span class="property">longitude</span>)<span class="string">"</span>)
+      }
+      <span class="type">HStack</span>{
+        <span class="type">Text</span>(<span class="string">"Altitude"</span>)
+        <span class="type">Spacer</span>()
+        <span class="type">Text</span>(<span class="string">"</span>\(<span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">altitude</span>)<span class="string">"</span>)
+      }
+      <span class="type">HStack</span>{
+        <span class="type">Text</span>(<span class="string">"Vertical Accuracy"</span>)
+        <span class="type">Spacer</span>()
+        <span class="type">Text</span>(<span class="string">"</span>\(<span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">verticalAccuracy</span>)<span class="string">"</span>)
+      }
+      <span class="type">HStack</span>{
+        <span class="type">Text</span>(<span class="string">"Horizontal Accuracy"</span>)
+        <span class="type">Spacer</span>()
+        <span class="type">Text</span>(<span class="string">"</span>\(<span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">horizontalAccuracy</span>)<span class="string">"</span>)
+      }
+    }
+  }
+}
+</code></pre><p>You could simplify this even further by Cmd-Clicking on the first <code>HStack</code> above and choosing "Extract Subview". This will move the <code>HStack</code> and everything in it to a new view. I'll call it <code>LocationDetailView</code>, and be sure to setup the properties it needs to populate the 2 <code>Text</code> fields</p><pre><code><span class="keyword">struct</span> LocationDetailView: <span class="type">View</span> {
+  
+  <span class="keyword">var</span> title: <span class="type">String</span>
+  <span class="keyword">var</span> value: <span class="type">Double</span>
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">HStack</span>{
+      <span class="type">Text</span>(title)
+      <span class="type">Spacer</span>()
+      <span class="type">Text</span>(<span class="string">"</span>\(value)<span class="string">"</span>)
+    }
+  }
+}
+</code></pre><p>This allows the <code>LocationInformation</code> view to look like this:</p><pre><code><span class="keyword">struct</span> LocationInformation: <span class="type">View</span> {
+  
+  <span class="keyword">@StateObject var</span> locationManager: <span class="type">LocationManager</span>
+  
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">VStack</span> {
+      <span class="type">LocationDetailView</span>(title: <span class="string">"Latitude"</span>, value: <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">coordinate</span>.<span class="property">latitude</span>)
+      <span class="type">LocationDetailView</span>(title: <span class="string">"Longitude"</span>, value: <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">coordinate</span>.<span class="property">longitude</span>)
+      <span class="type">LocationDetailView</span>(title: <span class="string">"Altitude"</span>, value: <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">altitude</span>)
+      <span class="type">LocationDetailView</span>(title: <span class="string">"Vertical Accuracy"</span>, value: <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">verticalAccuracy</span>)
+      <span class="type">LocationDetailView</span>(title: <span class="string">"Horizontal Accuracy"</span>, value: <span class="keyword">self</span>.<span class="property">locationManager</span>.<span class="property">location</span>.<span class="property">horizontalAccuracy</span>)
+    }
+  }
+}
+</code></pre><p>This is a whole lot cleaner! Note that this struct also decorates <code>locationManager</code> as a <code>@StateObject</code> so it doesn't get destroyed when the view gets recreated.</p><p>One more thing - add an entry for the <code>CoreLocationView</code> to the <code>Week05View</code> in the example app:</p><pre><code><span class="type">CoreLocationView</span>().<span class="property">tabItem</span>{ <span class="type">Text</span>(<span class="string">"Core Location"</span>) }.<span class="call">tag</span>(<span class="number">2</span>)
+</code></pre><p>Let’s run this. Once again, in the video I'm showing my iPhone in QuickTime Player, so that you can see it - we can’t get real data in the simulator, so doing this demo on the device is required. I’m walking around my house now, so you can see the changes in location.</p><p>CLLocationManager provides a nice API to get location information, and depending on your surroundings can get you some pretty detailed information.</p><p style="float: left">Previous:  <A HREF="../05-IntroductionToCoreLocation/index.html">Introduction to Core Location</A></p><p style="float: right">Next:  <A HREF="../07-WrappingUIViews/index.html" class="nextModule">Wrapping UIViews</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2023-2024 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 25, 2023 at 7:13 PM</p><p><a href="https://mastodon.social/@hococoder" target="_blank">My Mastodon</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://canvas.jhu.edu" target="_blank">JHU Canvas</a></p></footer></body></html>

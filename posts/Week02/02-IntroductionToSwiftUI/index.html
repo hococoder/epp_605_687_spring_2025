@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="og:site_name" content="Mobile Application Development for the iOS Platform"/><link rel="canonical" href="https://hococoder.com/posts/Week02/02-IntroductionToSwiftUI"/><meta name="twitter:url" content="https://hococoder.com/posts/Week02/02-IntroductionToSwiftUI"/><meta name="og:url" content="https://hococoder.com/posts/Week02/02-IntroductionToSwiftUI"/><title>Week 2 - Introduction to SwiftUI | Mobile Application Development for the iOS Platform</title><meta name="twitter:title" content="Week 2 - Introduction to SwiftUI | Mobile Application Development for the iOS Platform"/><meta name="og:title" content="Week 2 - Introduction to SwiftUI | Mobile Application Development for the iOS Platform"/><meta name="description" content="An introduction to making user interfaces with SwiftUI."/><meta name="twitter:description" content="An introduction to making user interfaces with SwiftUI."/><meta name="og:description" content="An introduction to making user interfaces with SwiftUI."/><meta name="twitter:card" content="summary"/><link rel="stylesheet" href="/styles.css" type="text/css"/><link rel="stylesheet" href="../../../styles.css" type="text/css"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="shortcut icon" href="/images/favicon.png" type="image/png"/><link rel="alternate" href="/feed.rss" type="application/rss+xml" title="Subscribe to Mobile Application Development for the iOS Platform"/></head><body><header><div class="wrapper"><a class="site-name" href="/">Mobile Application Development for the iOS Platform</a><nav><ul><li><a href="/epp_605_687_fall_2022/posts/Intro/About Me">AboutMe</a></li><li><a href="/epp_605_687_fall_2022/posts/Intro/Example App">ExampleApp</a></li><li><a href="/epp_605_687_fall_2022/posts/Week00/00-Week00Overview">Week0</a></li><li><a href="/epp_605_687_fall_2022/posts/Week01/00-Week01Overview">Week1</a></li><li><a href="/epp_605_687_fall_2022/posts/Week02/00-Week02Overview">Week2</a></li><li><a href="/epp_605_687_fall_2022/posts/Week03/00-Week03Overview">Week3</a></li><li><a href="/epp_605_687_fall_2022/posts/Week04/00-Week04Overview">Week4</a></li><li><a href="/epp_605_687_fall_2022/posts/Week05/00-Week05Overview">Week5</a></li><li><a href="/epp_605_687_fall_2022/posts/Week06/00-Week06Overview">Week6</a></li><li><a href="/epp_605_687_fall_2022/posts/Week07/00-Week07Overview">Week7</a></li><li><a href="/epp_605_687_fall_2022/posts/Week08/00-Week08Overview">Week8</a></li><li><a href="/epp_605_687_fall_2022/posts/Week09/00-Week09Overview">Week9</a></li><li><a href="/epp_605_687_fall_2022/posts/Week10/00-Week10Overview">Week10</a></li><li><a href="/epp_605_687_fall_2022/posts/Week11/00-Week11Overview">Week11</a></li><li><a href="/epp_605_687_fall_2022/posts/Week12/00-Week12Overview">Week12</a></li><li><a href="/epp_605_687_fall_2022/posts/Week13/00-Week13Overview">Week13</a></li><li><a href="/epp_605_687_fall_2022/posts/Week14/00-Week14Overview">Week14</a></li></ul></nav></div></header><div class="wrapper"><h1>Week 2 - Introduction to SwiftUI</h1><p style="float: left">Previous:  <A HREF="../01-TheDelegatePattern/index.html">The Delegate Pattern</A></p><p style="float: right">Next:  <A HREF="../03-SwiftUIState/index.html" class="nextModule">SwiftUI State</A></p><BR/><BR/><p class="suggestedReading">
+For a great Summary of SwiftUI, you can check out <A HREF="https://goshdarnswiftui.com">Gosh Darn SwiftUI</A> which has a great breakdown of each of the elements.  
+</p><p>Now since we have our model in place, let's setup the user interface for our screens. Before we do that however, let's look at some part of Xcode you'll need to work with SwiftUI (you'll learn more about the Xcode interface later in this module)</p><h2>Using SwiftUI</h2><center> <iframe width="1280" height="720" src="https://cdnapisec.kaltura.com/html5/html5lib/v2.81.2/mwEmbedFrame.php/p/1458241/uiconf_id/14487351/entry_id/1_io713fnv?wid=_1458241&iframeembed=true&playerId=kaltura_player&entry_id=1_io713fnv&flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[mediaProxy.preferedFlavorBR]=2500&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;flashvars[EmbedPlayer.NotPlayableDownloadLink]=true;&wid=1_abkvs1gz"allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+  </iframe>
+</center><p>There are 2 different ways in Xcode to build user interfaces using SwiftUI, but both of them involve the use of the Preview Canvas to get an idea of what your UI will actually look like. If you start a project and specify SwiftUI as the interface type, a ContentView.swift file will get generated for you. This is the default user interface file and that will get launched if we were to run the app in the simulator.</p><img src="../../../week02/ContentView.png#centerResizedSlide" alt="ContentView"/><p>When you open a file that can be used to render UI via SwiftUI, the editor will show a split configuration - code on the left, and a preview canvas on the right. You'll notice that the top of the preview canvas says "Preview paused" - this will appear on the first entry into the file, as well as when large changes to the source take place, so you have a little more control over when the preview gets updated. Otherwise, Xcode would make an attempt to keep the preview up to date as you type. If you press that button now, it will update the preview canvas and show you the prototypical "Hello World".<br><br><img src="../../../week02/ResumeButton.png#centerResizedSlide" alt="ResumeButton"/></p><p>We'll build some UI with both code and drag and drop later in the module, but I wanted to show you the library before that happens. In the upper right hand corner of Xcode you'll see a Plus button. If you click on this, a library pane will open up. Normally this can give you access to things like built in code snippets, media and colors, but when you have a SwiftUI file open, also give you two additional tabs - views and modifiers.<br><br><img src="../../../week02/Library.png#centerResizedSlide" alt="Library"/></p><p>Under the views tab you'll see all the various SwiftUI views that you can drag right into the preview canvas (which will also add it to the source code!), including view layout objects and gradients you can use in your code. The modifiers tab shows you the list of modifiers (of course), events, and gestures you can apply to the views you load into the canvas. In addition to being able to drop these objects into the preview canvas, you can also drag then into the source code!</p><p>You might be wondering where the UI in the preview canvas comes from - well, if you look at the bottom of the <code>ContentView.swift</code> file, you'll see a <code>#Previews</code> macro. We'll see how to adopt this preview macro to show various things later in this week's lecture, but basically, anything listed in this macro's closure will get placed into the Preview Canvas.</p><pre><code>#Preview {
+    <span class="type">ContentView</span>()
+}
+</code></pre><h2>SwiftUI Basics</h2><p>The EPExampleApp project (see the resources bundle for this week) has an app to demo certain aspects of iOS throughout the semester. For this week, the example app provides demos of the various SwiftUI widget. Let's take a look at some of the basic SwiftUI widgets now - you'll see others later in on the semester.<br><br></p><p class="info">To see these in action, please load the Example App project, go to Week02View.swift, hit resume in the Preview Canvas, and then hit the play button at the top of the simulator to have it go "live" - you'll be able to interact with it as you would the normal simulator.  If for some reason it stalls or gives you an error, you may have to click resume again (it is sadly not a perfect science to get the preview canvas up and running sometimes, but it *does* work).  You can also run the entire project in the simulator and choose week 2 from the listing when the app starts. </p><p class="info">There are "Preview" buttons in some of the code blocks. If you hover over the word "Preview" it will show you what the rendered view should look like!</p><h3><code>Text</code></h3><p>The closest equivalent to a <code>JLabel</code> in Java in the <code>Text</code> field. The initializer takes in the text you want to display.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/text.png"/>
+   </a>
+</div><pre><code><span class="type">Text</span>(<span class="string">"Your text here"</span>)
+</code></pre><h3><code>TextField</code></h3><p>An input field is represented by the <code>TextField</code> class. Note that the argument to the <code>text</code> argument has a <code>$</code> preceding it. We'll talk about what that means in the module on Swift UI State. Also notice there is a method call on the <code>TextField</code> called <code>textFieldStyle</code> - this is a modifier, which you'll learn about below.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/textField.png"/>
+   </a>
+</div><pre><code><span class="type">TextField</span>(<span class="string">"Username"</span>, text: <span class="property">$username</span>)
+  .<span class="call">textFieldStyle</span>(<span class="type">RoundedBorderTextFieldStyle</span>())
+</code></pre><h3><code>SecureField</code></h3><p>If you want to take in user input, but want to keep it secret - like when dealing with passwords - you can use <code>SecureField</code></p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/secureField.png"/>
+   </a>
+</div><pre><code><span class="type">SecureField</span>(<span class="string">"Password"</span>, text: <span class="property">$password</span>)
+  .<span class="call">textFieldStyle</span>(<span class="type">RoundedBorderTextFieldStyle</span>())
+</code></pre><h3><code>TextEditor</code></h3><p>A new widget in iOS14 is <code>TextEditor</code> - which is just what it sounds like. An editable text field that can contain 1 or more lines.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/textEditor.png"/>
+   </a>
+</div><pre><code><span class="type">TextEditor</span>(text: <span class="property">$someSampleText</span>)
+</code></pre><h3><code>Image</code></h3><p>Images have a few different initializers, and can take in some important modifiers. Let's look at some examples.</p><p>The first initializer takes 2 arguments: one, the name of the image, which in this case is the name in the Assets catalog (Assets.xcassets in the project) without the extension, and a <code>label</code> argument which is used for accessibility reasons (we'll talk about Accessibility later in the semester).</p><p>The 2 modifiers that come after it are important ones for working with Images: <code>resizable()</code> tells the layout system that this image can be resized; this will most likely be the case because the image you want to display will be larger than the screen you'll be displaying it on; <code>aspectRatio</code> here tells the layout system to allow this image to keep its aspect ratio, and allow it to be resized to fit in whatever frame it ends up being in. This will keep the image from being squished in one direction in the final layout.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/image.png"/>
+   </a>
+</div><pre><code><span class="type">Image</span>(<span class="string">"cook_hero"</span>, label: <span class="type">Text</span>(<span class="string">"Tim Cook"</span>))
+  .<span class="call">resizable</span>()
+  .<span class="call">aspectRatio</span>(contentMode: .<span class="dotAccess">fit</span>)
+</code></pre><p>A new initializer in iOS 17 takes advantage of the fact that all images and colors in the Assets catalog now get autogenerated static names that you can use instead of strings, for example:</p><pre><code><span class="type">Image</span>(<span class="string">"cookHero"</span>)
+  .<span class="call">resizable</span>()
+  .<span class="call">aspectRatio</span>(contentMode: .<span class="dotAccess">fit</span>)
+</code></pre><p>Note here that the accessibility label is not available with this initializer, so you would have to add it another way.</p><p>Another simpler initializer takes in an argument for the parameter <code>systemName</code>, which means it is expecting the name of an image that is known to the system. Here, we're using a name from <a href="https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/">SF Symbols</a>, which is a set of images provided by Apple for developers to use in their app development. Download it and give it a look - it is quite a nice resource.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/sfSymbols.png"/>
+   </a>
+</div><pre><code><span class="type">Image</span>(systemName: <span class="string">"person.crop.circle"</span>)
+</code></pre><p>You can now also easily animate SFSymbols as of iOS 17. Here's an example:</p><pre><code><span class="keyword">struct</span> DogView: <span class="type">View</span> {
+    <span class="keyword">@State private var</span> petCount = <span class="number">0</span>
+
+    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="type">Button</span> {
+            petCount += <span class="number">1</span>
+        } label: {
+            <span class="type">Label</span>(<span class="string">"Pet the Dog"</span>, systemImage: <span class="string">"dog"</span>)
+        }
+        .<span class="call">symbolEffect</span>(.<span class="dotAccess">bounce</span>, value: petCount)
+        .<span class="call">font</span>(.<span class="dotAccess">largeTitle</span>)
+    }
+}
+</code></pre><p>Try checking this one out in the EPExampleApp so you can see the bounce.</p><h3><code>Button</code></h3><p>There are a few different initializers for the Button type, and the one below uses a trailing closure to contain what should happen when the Button is pressed, while the first argument in the call is for the text of the button.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/button.png"/>
+   </a>
+</div><pre><code><span class="type">Button</span>(<span class="string">"Press Me"</span>)
+{
+  <span class="keyword">self</span>.<span class="property">alertIsShowing</span> = <span class="keyword">true</span>
+}
+</code></pre><h3><code>Toggle</code></h3><p>A toggle switch can be created with the <code>Toggle</code> class. The <code>isOn</code> argument captures the current state, and the <code>label</code> describes the view attached to the toggle. Note here that it's not just text in front of the toggle; it's any view you can compose.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/toggle1.png"/>
+   </a>
+</div><pre><code><span class="type">Toggle</span>(isOn: <span class="property">$toggleState</span>, label: { <span class="type">Text</span>(<span class="string">"Toggle On"</span>)})
+</code></pre><p>You can also have the Toggle represented as a depressable button, which you can get with the <code>toggleStyle</code> modifier.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/toggle2.png"/>
+   </a>
+</div><pre><code><span class="type">Toggle</span>(isOn: <span class="property">$toggleState</span>, label: { <span class="type">Text</span>(<span class="string">"Toggle On"</span>)})
+  .<span class="call">toggleStyle</span>(.<span class="dotAccess">button</span>)
+</code></pre><h3><code>Form</code>s and <code>Picker</code>s</h3><p>The <code>Form</code> type is used to group controls for data entry - pickers, text fields and more all get a nice grouping and display when in a form. The <code>Picker</code> type here is what most people would call a spinner - however when in a form, when you click on the picker it will take you to a new screen to show the possible choices you can choose from.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/picker.png"/>
+   </a>
+</div><pre><code><span class="type">Form</span> {
+  <span class="type">Picker</span>(selection: <span class="property">$pickerSelection</span>, label: <span class="type">Text</span>(<span class="string">"Picker Sample"</span>), content: {
+    <span class="type">Text</span>(<span class="string">"Sample Value 1"</span>).<span class="call">tag</span>(<span class="number">0</span>)
+    <span class="type">Text</span>(<span class="string">"Sample Value 2"</span>).<span class="call">tag</span>(<span class="number">1</span>)
+    <span class="type">Text</span>(<span class="string">"Sample Value 3"</span>).<span class="call">tag</span>(<span class="number">2</span>)
+  })
+}
+</code></pre><h3>Segmented Controls</h3><p>The segmented control is something you may have seen if you've searched in the Mail app on iOS - you get to choose between "All MailBoxes" and "Current Mailbox". The <code>selection</code> argument contains the selected state, and the <code>pickerStyle</code> modifier tells the layout system that this <code>Picker</code> should be displayed in the segmented control mode.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/segmentedControl.png"/>
+   </a>
+</div><pre><code><span class="type">Picker</span>(selection: <span class="property">$pickerSelection</span>, label: <span class="type">Text</span>(<span class="string">"Picker Sample"</span>), content: {
+  <span class="type">Text</span>(<span class="string">"Value 1"</span>).<span class="call">tag</span>(<span class="number">0</span>)
+  <span class="type">Text</span>(<span class="string">"Value 2"</span>).<span class="call">tag</span>(<span class="number">1</span>)
+  <span class="type">Text</span>(<span class="string">"Value 3"</span>).<span class="call">tag</span>(<span class="number">2</span>)
+}).<span class="call">pickerStyle</span>(<span class="type">SegmentedPickerStyle</span>())
+</code></pre><h3><code>DatePicker</code></h3><p>iOS 14 got a greatly enhanced date picker, which will pop up a new modal dialog with a natural date and time picker, instead of using the very hard to use spinner style that iOS has used for years.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/datePicker.png"/>
+   </a>
+</div><pre><code><span class="type">Form</span> {
+  <span class="type">DatePicker</span>(selection: <span class="property">$selectedDate</span>, displayedComponents: [.<span class="dotAccess">date</span>, .<span class="dotAccess">hourAndMinute</span>], label: {<span class="type">Text</span>(<span class="string">"Due"</span>)})
+}
+</code></pre><h3><code>Slider</code></h3><p>Sliders let you choose from a range of values by sliding a control left and right. The current value is captured in the variable pointed to by <code>value</code>.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/slider.png"/>
+   </a>
+</div><pre><code><span class="type">HStack</span> {
+  <span class="type">Slider</span>(value: <span class="property">$sliderValue</span>, in: <span class="number">0</span>...<span class="number">10</span>, step: <span class="number">0.1</span>)
+  <span class="type">Text</span>(<span class="string">"</span>\(sliderValue)<span class="string">"</span>)
+}
+</code></pre><h3><code>Stepper</code></h3><p>Similar to <code>Slider</code>, <code>Stepper</code> lets you choose from a range of values, but here you are presented with +/- buttons to step between different values.</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/stepper.png"/>
+   </a>
+</div><pre><code><span class="type">HStack</span> {
+  <span class="type">Stepper</span>(value: <span class="property">$stepperValue</span>, in: <span class="number">0</span>...<span class="number">10</span>, label: {<span class="type">Text</span>(<span class="string">"Step"</span>)})
+  <span class="type">Text</span>(<span class="string">"</span>\(stepperValue)<span class="string">"</span>)
+}
+</code></pre><h3><code>Divider</code></h3><p>The <code>Divider</code> control is a simple control that puts a divider between other views.</p><pre><code><span class="type">Divider</span>()
+</code></pre><h3><code>List</code>, <code>NavigationView</code> and <code>NavigationLink</code></h3><p>This example has a few pieces to it. If you look at the ContentView.swift file in the Example App, you'll see the main containing view is a <code>NavigationView</code>. This type of view is similar to <code>UINavigationController</code> in UIKit, and handles the cases where you will present a hierarchy of views - in our case, each week has a number of children to display - and will handle the navigation between those views and also provide back buttons automatically.<br><br>You also have the possibility of including titles for the navigation bar. In Week02View.swift, you'll see <code>.navigationBarTitle("SwiftUI Examples")</code> as a modifier on the <code>VStack</code>. This is important to note: the <code>navigationBarTitle</code> modifier and other related modifiers go on the view <strong>INSIDE</strong> the NavigationView, not the <code>NavigationView</code> itself.<br><br>As you can see in <code>ContentView.swift</code> one way to specify the elements of a <code>NavigationView</code> is to place them within a <code>List</code>, which is simply a wrapper around those views you want to include (another way to specify a list of entries like this is to use a <code>ForEach</code> statement which you'll see later.)</p><div class="code-preview">
+   <a>
+       Preview <img src="../../../week02/navigationLink.png"/>
+   </a>
+</div><pre><code><span class="type">List</span> {
+  <span class="type">NavigationLink</span>(destination: <span class="type">Text</span>(<span class="string">"Row 1"</span>), label: {<span class="type">Text</span>(<span class="string">"Row 1"</span>)})
+  <span class="type">NavigationLink</span>(destination: <span class="type">Text</span>(<span class="string">"Row 2"</span>), label: {<span class="type">Text</span>(<span class="string">"Row 2"</span>)})
+  <span class="type">Text</span>(<span class="string">"Row 3"</span>)
+  <span class="type">Text</span>(<span class="string">"Row 4"</span>)
+}
+</code></pre><p>The first 2 entries here are special - they are <code>NavigationLink</code>s, which will display the view specified by the <code>label</code> argument for the row's title, and when tapped, send you to the view specified by the <code>destination</code> argument. This simple example contains <code>Text</code> views, but can be any complex view you want to use (see <code>ContentView.swift</code> for an example of this).</p><h3>NavigationStack</h3><p>Introduced in iOS 16, <code>NavigationStack</code> provides a new way to deal with NavigationLinks. In the example below, you have a view within which is a NavigationLink. Inside the <code>NavigationStack</code> is a list of those views, and on that list is a new modifier, called <code>.navigationDestination</code>. This particular instance of the modifier is specifically for when a <code>NavStackExampleItem</code> is encountered, which means you can have different behaviors for different items as long as you have a modifier that can handle them.<br><br><code></code>` struct NavStackExampleItemView: View {</p><p>var item: NavStackExampleItem</p><p>var body: some View { NavigationLink(value: item) { Text("Row (item.row)") } } }</p><p>NavigationStack { List { NavStackExampleItemView(item: NavStackExampleItem(row: 0)) NavStackExampleItemView(item: NavStackExampleItem(row: 1)) NavStackExampleItemView(item: NavStackExampleItem(row: 2)) NavStackExampleItemView(item: NavStackExampleItem(row: 3)) } .navigationDestination(for: NavStackExampleItem.self) { item in Text("This is row (item.row)") .navigationTitle("Row (item.row)") } .navigationBarTitle("Navigation Stack") } .titledBorder(title: "List Example with NavigationStack", height: 400)</p><pre><code>
+
+
+### <span class="type">Modal Views
+
+Modal</span> views can be displayed by using the `.sheet` modifier.  <span class="type">The</span> `content` of the `.sheet` is displayed <span class="keyword">in</span> a modal view that overlays the current view, and can be dismissed by swiping down.
+
+</code></pre><p>Button("Press for Modal View") { self.modalIsShowing = true } .sheet(isPresented: $modalIsShowing, content: { Text("This is a modal!") })</p><pre><code>
+
+<span class="type">If</span> you want to cover <span class="keyword">as</span> much of the view <span class="keyword">as</span> possible, use `fullScreenCover`.  <span class="type">Note</span> that <span class="keyword">in</span> this <span class="keyword">case</span> you'll have to use a member of the <span class="type">SwiftUI Environment</span> - which we'll discuss <span class="keyword">in</span> a few modules - to help dismiss the sheet.
+
+</code></pre><p>Button("Press for Full Screen Cover View") { self.fullScreenIsShowing = true } .fullScreenCover(isPresented: $fullScreenIsShowing, content: { FullScreen() })</p><p>struct FullScreen: View { @Environment(.dismiss) private var dismiss</p><p>var body: some View { Text("This is a full screen modal!") .onTapGesture { dismiss() } } }</p><pre><code>
+
+### `<span class="type">ProgressView</span>`
+
+`<span class="type">ProgressView</span>` can be used to display a progress indicator.
+
+&lt;p <span class="keyword">class</span>=<span class="string">"preview-../../../week02/progress.png-"</span>/&gt;
+</code></pre><p>HStack { ProgressView(value: progress) Button("Add Progress", action: { progress += 0.1 }) }</p><pre><code>
+
+
+### `<span class="type">ColorPicker</span>`
+
+iOS <span class="number">14</span> also introduced a much needed improved color picker to the available widgets <span class="keyword">for</span> developers.  `<span class="type">ColorPicker</span>` is the name of the widget, and the chosen color <span class="keyword">is</span> stored <span class="keyword">in</span> the property assigned <span class="keyword">in</span> the `selection` argument. 
+
+&lt;p <span class="keyword">class</span>=<span class="string">"preview-../../../week02/colorPicker2.png-"</span>/&gt;
+</code></pre><p>ColorPicker("Color", selection: $color)</p><pre><code>
+
+### <span class="type">Inspector
+
+Inspector</span> panels - like those you see <span class="keyword">in</span> <span class="type">Xcode</span> on the left and right hand sides - are now usable <span class="keyword">in</span> iOS.  <span class="type">Depending</span> on the platform, they can either appear <span class="keyword">as</span> a slideover (on iOS) or more like a <span class="type">Xcode</span> like pane on iPadOS and macOS.  <span class="type">All</span> you need <span class="keyword">is</span> a modifier on your view:
+
+</code></pre><p>.inspector(isPresented: $isShowingInspector) { Text("Inspector View") }</p><pre><code>
+
+<span class="type">Here</span>, the closure shows whatever you want your <span class="type">Inspector</span> to show, and the appearance <span class="keyword">is</span> based on the current value of <span class="property">$isShowingInspector</span>. <span class="type">The</span> exact way it appears <span class="keyword">is</span> taken care of behind the scenes by iOS.  <span class="type">Check</span> out the <span class="type">EPExampleApp</span> project <span class="keyword">for</span> an example of this - <span class="type">I</span>'ve included an iPadOS preview so you can see how it works there versus iOS. 
+
+## <span class="type">Modifiers</span>
+
+### <span class="type">Built</span> <span class="keyword">in</span> <span class="type">Modifiers
+
+We</span> talked about modifiers briefly above - <span class="keyword">let</span>'s dive <span class="keyword">in</span> a little more.
+
+<span class="type">Modifiers</span> on <span class="type">Views</span> <span class="keyword">do</span> just that - they modify them <span class="keyword">in some</span> way, and when they are done, return a new <span class="type">View</span> (the old one <span class="keyword">is</span> destroyed).  <span class="type">However</span>, depending on the modifier, the <span class="type">View</span> that <span class="keyword">is</span> returned may be of the same type, or it may be a more generic type.  <span class="type">Let</span>'s take a look at the `<span class="type">Image</span>` example from earlier:
+
+</code></pre><p>Image("cook_hero", label: Text("Tim Cook")) .resizable() .aspectRatio(contentMode: .fit)</p><pre><code>
+
+<span class="type">Let</span>'s look at the function signature <span class="keyword">for</span> the `<span class="call">resizable</span>()` modifier first:
+
+</code></pre><p>func resizable(capInsets: EdgeInsets = EdgeInsets(), resizingMode: Image.ResizingMode = .stretch) -&gt; Image</p><pre><code>
+
+<span class="type">This</span> shows that `<span class="call">resizable</span>()` returns an <span class="type">Image</span>, and has <span class="keyword">default</span> values <span class="keyword">for</span> each of its arguments, so `<span class="call">resizable</span>()` is a valid call to the function, and it uses those defaults.  
+
+<span class="type">Next</span> <span class="keyword">let</span>'s look at `aspectRatio`
+
+</code></pre><p>func aspectRatio(CGFloat?, contentMode: ContentMode) -&gt; some View</p><pre><code>
+
+<span class="type">This</span> function returns `some <span class="type">View</span>` - the opaque <span class="type">View</span> type we discussed before.  <span class="type">It</span> does *not* <span class="keyword">return</span> an <span class="type">Image</span>.  <span class="type">This</span> <span class="keyword">is</span> a more generic modifier.  <span class="type">So</span> what does this imply?  <span class="type">What</span> does this code <span class="keyword">do</span>?
+
+</code></pre><p>Image("cook_hero", label: Text("Tim Cook")) .aspectRatio(contentMode: .fit) .resizable()</p><pre><code>
+
+<span class="type">Based</span> on the discussion of the modifier function signatures above, `aspectRatio` would <span class="keyword">return</span> `some <span class="type">View</span>` and then `<span class="call">resizable</span>()` would <span class="keyword">get</span> called on that - but that modifier <span class="keyword">is</span> specifically designed <span class="keyword">for</span> `<span class="type">Images</span>`, and doesn't exist <span class="keyword">for</span> `<span class="type">View</span>`.  <span class="type">So</span> therefore **<span class="type">ORDER MATTERS</span>** when dealing with modifiers!  <span class="type">You</span>'ll want to start with modifiers that are specific to the type you are working on and then expand to ones that are <span class="keyword">for</span> more generic <span class="type">Views</span>
+
+
+### <span class="type">Custom Modifiers
+
+In</span> addition to the built <span class="keyword">in</span> modifiers, you can make your own.  <span class="type">In</span> the `<span class="type">Week02View</span>.<span class="property">swift</span>` file <span class="type">I</span> made my own modifier to wrap each of the sample views with a border and title. 
+
+</code></pre><p>struct TitledBorder: ViewModifier {<br> let title: String let height: Double<br> init(title: String, height: Double) { self.title = title self.height = height }<br> func body(content: Content) -&gt; some View { ZStack { HStack { Spacer() content.padding() } .frame(height: height) .overlay( RoundedRectangle(cornerRadius: 16) .stroke(Color.black, lineWidth: 2) ).overlay( GeometryReader { geometry in Text(title).background(Color.white).position(x: geometry.size.width/2, y: 0) }, alignment: .topLeading ) }.padding()<br> } }</p><pre><code>
+
+<span class="type">This</span> custom code uses a few layout managers we haven't talked about yet - `<span class="type">VStack</span>` will stack the elements vertically (`<span class="type">HStack</span>` is the reverse of this, where it stacks them horizontally), and `<span class="type">ZStack</span>` will sort views perpendicular to the screen - the first element <span class="keyword">is</span> inline with the screen, and subsequent views come closer to the viewer.
+
+<span class="type">This</span> example also uses `<span class="type">GeometryReader</span>` which a view that can provide you <span class="keyword">some</span> positional and size information about the views it wraps.  <span class="type">This</span> sort of information usually isn't needed with <span class="type">SwiftUI</span> but can come <span class="keyword">in</span> handy <span class="keyword">in</span> certain cases.  <span class="type">Here I</span> wanted to <span class="keyword">get</span> a bit more refined placement of the title text. 
+
+<span class="type">In</span> order to use this modifier, <span class="type">I</span> extended the `<span class="type">View</span>` type to add a modifier that would call my custom code:
+
+</code></pre><p>extension View { func titledBorder(title: String, height: Double = 90.0) -&gt; some View { self.modifier(TitledBorder(title: title, height: height)) } }</p><pre><code>
+
+<span class="type">With</span> this <span class="keyword">in</span> hand, <span class="type">I</span> can call:
+
+</code></pre><p>Text("Your text here") .titledBorder(title: "Text View")</p><pre><code>
+
+to wrap the view, or to specify a height <span class="keyword">for</span> the titled border:
+
+</code></pre><p>Text("Your text here") .titledBorder(title: "Text View", height: 150)</p><pre><code>
+
+<span class="type">Notice</span> how <span class="type">I</span>'ve only declared one function <span class="keyword">in</span> my <span class="keyword">extension</span>, but <span class="type">I</span>'m calling it two ways?  <span class="type">This</span> <span class="keyword">is</span> because the height has a <span class="keyword">default</span> value (<span class="number">90</span>), so <span class="keyword">if</span> <span class="type">I</span> don't include that argument <span class="keyword">in</span> my call, <span class="type">Swift</span> just uses the default.  
+
+
+<span class="type">In</span> the next module we'll discuss how state <span class="keyword">is</span> carried between views <span class="keyword">in</span> <span class="type">SwiftUI</span>.
+
+&lt;p style=<span class="string">"float: left"</span>&gt;<span class="type">Previous</span>:  &lt;<span class="type">A HREF</span>=<span class="string">"../01-TheDelegatePattern/index.html"</span>&gt;<span class="type">The Delegate Pattern</span>&lt;/<span class="type">A</span>&gt;&lt;/p&gt;
+&lt;p style=<span class="string">"float: right"</span>&gt;<span class="type">Next</span>:  &lt;<span class="type">A HREF</span>=<span class="string">"../03-SwiftUIState/index.html"</span> <span class="keyword">class</span>=<span class="string">"nextModule"</span>&gt;<span class="type">SwiftUI State</span>&lt;/<span class="type">A</span>&gt;&lt;
+</code></pre></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2023-2024 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 25, 2023 at 7:13 PM</p><p><a href="https://mastodon.social/@hococoder" target="_blank">My Mastodon</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://canvas.jhu.edu" target="_blank">JHU Canvas</a></p></footer></body></html>
