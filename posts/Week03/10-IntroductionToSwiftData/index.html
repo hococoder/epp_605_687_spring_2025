@@ -6,6 +6,11 @@
 class</span> AssignmentGrade {
   <span class="keyword">var</span> grade: <span class="type">Double</span>
   <span class="keyword">var</span> graderComments: <span class="type">String</span>
+  
+  <span class="keyword">init</span>(grade: <span class="type">Double</span>, graderComments: <span class="type">String</span>) {
+  <span class="keyword">self</span>.<span class="property">grade</span> = grade
+  <span class="keyword">self</span>.<span class="property">graderComments</span> = graderComments
+  }
 }
 </code></pre><p>That's it! Our <code>AssignmentGrade</code> just needs a <code>@Model</code> macro on it and the macro does the rest. Relationships work too!</p><pre><code><span class="keyword">@Model
 class</span> Assignment {
@@ -13,49 +18,69 @@ class</span> Assignment {
   <span class="keyword">var</span> dueDate: <span class="type">Date</span>
   
   <span class="keyword">var</span> grades: [<span class="type">AssignmentGrade</span>]
+  
+  <span class="keyword">init</span>(name: <span class="type">String</span>, dueDate: <span class="type">Date</span>, grades: [<span class="type">AssignmentGrade</span>]) {
+  <span class="keyword">self</span>.<span class="property">name</span> = name
+  <span class="keyword">self</span>.<span class="property">dueDate</span> = dueDate
+  <span class="keyword">self</span>.<span class="property">grades</span> = grades
+  }
 }
 </code></pre><p>The <code>@Model</code> macro automatically establishes the connection between the <code>Assignment</code> and the <code>AssignmentGrade</code>. You can customize things as well! If I wanted to make sure the name of the assignment was unique, and that the relationship was a Cascade (so the grades get deleted when the assignment gets deleted), I could do the following:</p><pre><code><span class="keyword">@Model
 class</span> Assignment {
   <span class="keyword">@Attribute</span>(.<span class="dotAccess">unique</span>) <span class="keyword">var</span> name: <span class="type">String</span>
   <span class="keyword">var</span> dueDate: <span class="type">Date</span>
   
-  <span class="keyword">@Relationship</span>(.<span class="dotAccess">cascade</span>)
+  <span class="keyword">@Relationship</span>(deleteRule: .<span class="dotAccess">cascade</span>)
   <span class="keyword">var</span> grades: [<span class="type">AssignmentGrade</span>]
 }
 </code></pre><h2>Using the Model in your app</h2><p>To use the models you define in your app, you inject them in a similar fashion to Core Data:</p><pre><code><span class="keyword">@main
-struct</span> GradeBookApp: <span class="type">App</span> {
+struct</span> SwiftDataExampleApp: <span class="type">App</span> {
+  <span class="keyword">var</span> sharedModelContainer: <span class="type">ModelContainer</span> = {
+    <span class="keyword">let</span> schema = <span class="type">Schema</span>([
+      <span class="type">Assignment</span>.<span class="keyword">self</span>, <span class="type">AssignmentGrade</span>.<span class="keyword">self</span>
+    ])
+    <span class="keyword">let</span> modelConfiguration = <span class="type">ModelConfiguration</span>(schema: schema, isStoredInMemoryOnly: <span class="keyword">false</span>)
 
-    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> {
-        <span class="type">WindowGroup</span> {
-            <span class="type">ContentView</span>()
-        }
-        .<span class="call">modelContainer</span>(for: [<span class="type">Teacher</span>.<span class="keyword">self</span>, <span class="type">Assignment</span>.<span class="keyword">self</span>, <span class="type">AssignmentGrade</span>.<span class="keyword">self</span>])
+    <span class="keyword">do</span> {
+        <span class="keyword">return try</span> <span class="type">ModelContainer</span>(for: schema, configurations: [modelConfiguration])
+    } <span class="keyword">catch</span> {
+        <span class="call">fatalError</span>(<span class="string">"Could not create ModelContainer:</span> \(error)<span class="string">"</span>)
     }
-}
-</code></pre><p>The <code>.modelContainer</code> modifier takes in an array of <code>@Model</code> types.</p><h2>Getting data from the database</h2><p>Say goodbye to <code>@FetchRequest</code>s - and say hello to <code>@Query</code>:</p><pre><code><span class="keyword">@Query var</span> assignments: [<span class="type">Assignment</span>]
-<span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
-    <span class="type">List</span>(assignments) { assignment <span class="keyword">in</span>
-        <span class="type">NavigationLink</span>(assignment.<span class="property">name</span>, destination: <span class="type">AssignmentView</span>(assignment))
+  }()
+
+  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> {
+    <span class="type">WindowGroup</span> {
+        <span class="type">ContentView</span>()
     }
-}
-</code></pre><p>and those queries, like <code>@FetchRequest</code>, can be customized:</p><pre><code><span class="keyword">@Query</span>(sort: \<span class="type">Assignment</span>.<span class="property">name</span>, order: .<span class="dotAccess">forward</span>)  <span class="keyword">var</span> assignments: [<span class="type">Assignment</span>]
-<span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
-    <span class="type">List</span>(assignments) { assignment <span class="keyword">in</span>
-        <span class="type">NavigationLink</span>(assignment.<span class="property">name</span>, destination: <span class="type">AssignmentView</span>(assignment))
-    }
-}
-</code></pre><h2>Inserting and Deleting Data</h2><p>If you think back to the module "The App Lifecycle" in week 2, you've already seen how SwiftData handles inserts and deletes:</p><pre><code><span class="keyword">private func</span> addAssignment() {
-    <span class="call">withAnimation</span> {
-      <span class="keyword">let</span> newAssignment = <span class="type">Assignment</span>(<span class="string">"Assignment 1"</span>)
-        modelContext.<span class="call">insert</span>(newAssignment)
-    }
+    .<span class="call">modelContainer</span>(sharedModelContainer)
   }
+}
+</code></pre><p>The <code>.modelContainer</code> modifier takes in a <code>ModelContainer</code>, which takes in an array of <code>@Model</code> types in its <code>schema</code> property.</p><h2>Getting data from the database</h2><p>Say goodbye to <code>@FetchRequest</code>s - and say hello to <code>@Query</code>:</p><pre><code><span class="keyword">@Query private var</span> items: [<span class="type">Item</span>]
 
-<span class="keyword">private func</span> deleteAssignment(offsets: <span class="type">IndexSet</span>) {
+<span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">NavigationSplitView</span> {
+        <span class="type">List</span> {
+            <span class="type">ForEach</span>(items) { item <span class="keyword">in</span>
+  <span class="comment">//....</span>
+</code></pre><p>and those queries, like <code>@FetchRequest</code>, can be customized:</p><pre><code><span class="keyword">@Querysort</span>: \<span class="type">Item</span>.<span class="property">timestamp</span>, order: .<span class="dotAccess">forward</span>) <span class="keyword">private var</span> items: [<span class="type">Item</span>]
+
+<span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> {
+    <span class="type">NavigationSplitView</span> {
+        <span class="type">List</span> {
+            <span class="type">ForEach</span>(items) { item <span class="keyword">in</span>
+  <span class="comment">//...</span>
+</code></pre><h2>Inserting and Deleting Data</h2><p>If you think back to the module "The App Lifecycle" in week 2, you've already seen how SwiftData handles inserts and deletes:</p><pre><code><span class="keyword">private func</span> addItem() {
   <span class="call">withAnimation</span> {
-    <span class="keyword">for</span> index <span class="keyword">in</span> offsets {
-      modelContext.<span class="call">delete</span>(assignment[index])
-    }
+      <span class="keyword">let</span> newItem = <span class="type">Item</span>(timestamp: <span class="type">Date</span>())
+      modelContext.<span class="call">insert</span>(newItem)
   }
 }
-</code></pre><p>But what if you already have a setup in Core Data, and you want to switch to SwiftData? You'll learn how to do that next.</p><p style="float: left">Previous:  <A HREF="../09-SwiftUIImprovements/index.html">SwiftUI Improvements</A></p><p style="float: right">Next:  <A HREF="../11-ConvertingToSwiftData/index.html" class="nextModule">Converting To Swift Data</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2023-2024 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated August 27, 2023 at 8:04 PM</p><p><a href="https://mastodon.social/@hococoder" target="_blank">My Mastodon</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://canvas.jhu.edu" target="_blank">JHU Canvas</a></p></footer></body></html>
+
+<span class="keyword">private func</span> deleteItems(offsets: <span class="type">IndexSet</span>) {
+  <span class="call">withAnimation</span> {
+      <span class="keyword">for</span> index <span class="keyword">in</span> offsets {
+          modelContext.<span class="call">delete</span>(items[index])
+      }
+  }
+}
+</code></pre><p>But what if you already have a setup in Core Data, and you want to switch to SwiftData? You'll learn how to do that next.</p><p style="float: left">Previous:  <A HREF="../09-SwiftUIImprovements/index.html">SwiftUI Improvements</A></p><p style="float: right">Next:  <A HREF="../11-ConvertingToSwiftData/index.html" class="nextModule">Converting To Swift Data</A></p></div><footer><p>Generated with ❤️ using <a href="https://github.com/johnsundell/publish">Publish</a></p><p>© 2023-2024 Josh Steele (rsteele3@jhu.edu) <a href="mailto:"(rsteele3@jhu.edu)""></a></p><p>Last updated September 4, 2023 at 10:46 AM</p><p><a href="https://mastodon.social/@hococoder" target="_blank">My Mastodon</a> | <a href="https://github.com/hococoder" target="_blank">My GitHub</a> | <a href="https://ep.jhu.edu" target="_blank">Whiting School EPP</a> | <a href="https://canvas.jhu.edu" target="_blank">JHU Canvas</a></p></footer></body></html>
