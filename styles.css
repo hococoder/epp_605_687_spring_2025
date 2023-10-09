@@ -75,7 +75,8 @@ nav li {
     display: inline-block;
     padding: 5px;
     border-radius: 12px;
-    background-color: #000000;
+    background-color: #000;
+    color: #fff;
 }
 
 h1 {
@@ -325,6 +326,11 @@ img[src*="#center"] {
 
     header {
         background-color: #0067ac;
+    }
+
+    nav li {
+        background-color: #000;
+        color: #fff;
     }
 }
 
