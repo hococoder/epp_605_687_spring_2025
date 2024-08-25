@@ -1,18 +1,3 @@
-/**
-*  Publish Hococoder theme
-*  Copyright (c) 2020, Josh Steele
-*  MIT license, see LICENSE file for details
-*  This file is a modified version of
-*  Foundation theme included in Publish
- *  Uses the Source Sans Pro font, Copyright 2010-2018 Adobe, license: https://github.com/adobe-fonts/source-sans-pro/blob/release/LICENSE.md.  *  Uses the Source Code Pro font, Copyright 2010, 2012 Adobe Systems Incorporated, license: https://github.com/adobe-fonts/source-code-pro/blob/master/LICENSE.md. 
-*/
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 /* Fonts */
 
 @font-face {
@@ -31,53 +16,7 @@
     src: url(/fonts/SourceCodePro-Regular.ttf);
 }
 
-body {
-    background: #fff;
-    color: #000;
-    /*font-family: Helvetica, Arial;*/
-    font-family: "Main";
-    font-size: 1.05em;
-    text-align: center;
-}
-
-.wrapper {
-    max-width: 1280px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 40px 0px 40px 0px;
-    text-align: left;
-}
-
-header {
-    background-color: #0067ac;
-}
-
-header .wrapper {
-    padding: 32px 16px;
-    text-align: center;
-}
-
-header a {
-    text-decoration: none;
-}
-
-header .site-name {
-  font-size: 3.5em;
-    color: #000;
-    font-weight: bold;
-}
-
-nav {
-    margin-top: 20px;
-}
-
-nav li {
-    display: inline-block;
-    padding: 5px;
-    border-radius: 12px;
-    background-color: #000;
-    color: #fff;
-}
+/*GENERAL STYLING*/
 
 h1 {
     margin-bottom: 20px;
@@ -103,25 +42,8 @@ a {
     color: inherit;
 }
 
-.nextModule:link p {
-  color: green;
-  text-align: right;
-}
-
-.download {
-    display: inline-block;
-    background-color: #0067ac;
-    color: #fff;
-    padding: 4px 6px;
-    border-radius: 5px;
-    margin-right: 5px;
-    text-align: center;
-}
-
-
-
-.description {
-    margin-bottom: 40px;
+nav {
+    margin-top: 20px;
 }
 
 .item-list > li {
@@ -181,10 +103,6 @@ a {
     padding: 6px 10px;
 }
 
-footer {
-    color: #8a8a8a;
-}
-
 ol {
     margin-left: 20px;
     margin-bottom: 10px;
@@ -207,33 +125,342 @@ ul li {
     line-height: 1.5em;
 }
 
-img[src*="#centerResized"] {
-  display: block;
-  margin: 0 auto;
-  width: 300px;
-  height: auto;
-  margin-bottom: 10px;
-}
-
-.recommendation {
+nav li {
     display: inline-block;
-    border-radius: 7px;
+    padding: 5px;
+    border-radius: 12px;
+    background-color: #000;
     color: #fff;
-    padding: 7px 7px 7px 33px;
-    font-size: 0.9em;
 }
 
-.info {
+/*LAYOUT*/
+
+.layout {
+  //  width: 1920px
+  //  height: 1080px;
+  min-height: 100vh;
+
+  display: grid;
+  grid:
+  "header header header" auto
+  "leftSide body rightSide" 1fr
+  "footer footer footer" auto
+  / auto 1fr auto;
+  gap: 2px;
+  background-color: #000;
   color: #fff;
 }
 
-.info, blockquote p, .sponsorship .content > ul, .services .content > ul {
-    position: relative;
-    background-color: #000;
-    padding: 10px 10px 10px 15px;
-    border-top-right-radius: 7px;
-    border-bottom-right-radius: 7px;
-    border-left: 4px solid #ff644e;
+.weeklayout {
+  width: 99vw;
+  justify-content: space-evenly;
+  display: flex;
+  gap: 16px;
+}
+
+.grow1 {
+  flex-grow: 1;
+  text-align: center;
+  margin: 5px;
+  grid-row:1;
+  font-size: 100%;
+  display: inline-block;
+  padding: 5px;
+  border-radius: 12px;
+  background-color: #000;
+  color: #fff;
+}
+
+.headerlayout {
+//  width: 1920px;
+
+  display: grid;
+    grid:
+    "title" auto
+    "links links links links links links links links links links links links links links links links " $
+    / auto 1fr auto;
+    gap: 8px;
+}
+
+
+.title {
+  grid-area: title;
+  text-align: center;
+  grid-row:1;
+  grid-column-start: span 16;
+  font-size: 250%;
+  padding: 40px 0px 20px 0px;
+}
+
+.subtitle {
+  grid-area: title;
+  text-align: center;
+  grid-row:1;
+  grid-column-start: span 16;
+  font-size: 125%;
+  padding: 20px 0px 40px 0px;
+}
+
+.links {
+  grid-area: links;
+  margin: auto;
+  grid-row:2;
+  font-size: 75%;
+  display: inline-block;
+  padding: 5px;
+  border-radius: 12px;
+  background-color: #000;
+  color: #fff;
+}
+
+.header {
+  grid-area: header;
+  background-color: #0067ac;
+}
+
+header a {
+    text-decoration: none;
+}
+
+header .title {
+  font-size: 3.5em;
+    color: #000;
+    font-weight: bold;
+}
+
+leftSide {
+  grid-area: leftSide;
+  grid-column-start: 1;
+  grid-row-start: 2;
+  font-size: 130%;
+  /*border:3px solid blue;*/
+  padding: 5px;
+  background-color: #0067ac;
+  .weekSection {
+    font-size: 80%;
+    padding-top: 20px;
+  }
+  width: 200px;
+}
+
+leftSideEmpty {
+  grid-area: leftSide;
+  grid-column-start: 1;
+  grid-row-start: 2;
+  font-size: 130%;
+  padding: 5px;
+  background-color: #000;
+}
+
+#floater {
+  border-radius: 15px;
+  background-color: #fff;
+  color: #000;
+  position: fixed;
+  top: 400px;
+  right: 100px;
+  height: 350px;
+  width: 200px;
+  z-index: 100;
+  text-align: left;
+  padding-inline-start: 5px;
+}
+
+/*#floater { display: none; }*/
+
+#floater:hover {
+  display: block;
+  overflow: auto;
+}
+
+#floater h3 {
+  background-color: #fff;
+  color: #000;
+  margin-bottom: 5px;
+  padding: 0px 0px 0px 0px;
+}
+
+#floater ul {
+  margin-bottom: 5px;
+  margin-left: 5px;
+  padding: 0px 0px 0px 0px;
+}
+
+#floater ul li {
+  margin-bottom: 5px;
+  padding: 0px 5px 0px 0px;
+}
+
+body {
+  background: #000;
+  color: #fff;
+  grid-area: body;
+  grid-column: 2 ;
+  grid-row-start: 2;
+  font-size: 100%;
+  font-family: "Main";
+  text-align: center;
+/*  border:3px solid red;
+  padding: 5px 125px 5px 20px; */
+}
+
+
+footer {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  grid-area: footer;
+  grid-column-start: 1;
+  grid-row-start: 3;
+  font-size: 100%;
+  /*border:3px solid blue; */
+  color: #8a8a8a;
+}
+
+.mini-wrapper {
+  border:3px solid dodgerblue;
+  padding: 20px;
+  font-size: 150%;
+}
+
+/* MY CUSTOM STYLING */
+
+.wrapper {
+    /* max-width: 1280px; */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 40px 0px 40px 0px;
+    text-align: left;
+}
+
+leftside .weekSection ul {
+    padding: 0px 0px 0px 0px;
+    padding-inline-start: 0px;
+    text-align: left;
+}
+
+leftside .weekSection ul li {
+    margin-left: 0px;
+    font-size: 125%;
+}
+
+body .layout .wrapper center .download {
+  padding: 0px 5px 0px 5px;
+}
+
+body .layout .wrapper center .download {
+    display: inline-block;
+    background-color: #0067ac;
+    color: #fff;
+    padding: 4px 6px;
+    border-radius: 5px;
+    margin-right: 5px;
+    text-align: center;
+    padding: 0px 5px 0px 5px;
+}
+
+body .layout .wrapper p {
+  padding: 0px 300px 0px 300px;
+}
+
+body .layout .wrapper pre {
+  padding: 0px 0px 0px 0px;
+  margin-left: 300px;
+}
+
+.wrapper h2 {
+  padding: 0px 300px 0px 300px;
+}
+
+.wrapper h3 {
+  padding: 0px 300px 0px 300px;
+}
+
+.wrapper h4 {
+  padding: 0px 300px 0px 300px;
+}
+
+.wrapper ul {
+  padding: 0px 300px 0px 300px;
+}
+
+.wrapper ul li {
+  padding: 0px 300px 0px 0px;
+}
+
+.wrapper ul li ul {
+  padding: 0px 300px 0px 0px;
+}
+
+.wrapper ol {
+  padding: 0px 300px 0px 300px;
+}
+
+.wrapper ol li {
+  padding: 0px 300px 0px 0px;
+}
+
+.wrapper ol li ul {
+  padding: 0px 300px 0px 0px;
+}
+
+
+.nextModule:link p {
+  color: green;
+  text-align: right;
+}
+
+.tocItem {
+  padding: 10px 10px 50px 12px;
+}
+
+.tocItem selected {
+  padding: 10px 10px 8px 12px;
+  color: black;
+  background-color: white;
+}
+
+.comment-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.chain {
+  border-left: 2px dashed gray;
+  position: absolute;
+  height: 50%;
+  left: -17px; /* for you to adjust and line up */
+}
+
+.chain-top {
+  top: 0;
+}
+
+.chain-bottom {
+  top: 50%;
+}
+
+
+.comment {
+  /*border: 1px solid lightgray;
+  border-radius: 8px; */
+  padding: 8px 16px;
+  margin: 50px 0; /* increase vertical margin to see that I scale with different sizes */
+  max-width: 300px;
+}
+
+.comment-icon {
+  font-size: 32px;
+  margin-right: 16px;
+  background: white;
+  color: gray;
+  z-index: 10;
+}
+
+
+.description {
+    margin-bottom: 40px;
 }
 
 .new {
@@ -241,12 +468,15 @@ img[src*="#centerResized"] {
     position: relative;
     margin-top: 30px;
     margin-bottom: 22px;
+    margin-left: 300px;
+    margin-right: 300px;
     border-radius: 8px;
     background-color: #fff;
     color: #000;
     border: 2px solid #0067ac;
     padding: 10px 10px 8px 12px;
     text-decoration: none;
+    text-align: center;
 }
 
 .new::before {
@@ -259,6 +489,7 @@ img[src*="#centerResized"] {
     background-color: #000;
     color: #0067ac;
     font-weight: bold;
+    border-radius: 8px;
     /*text-transform: uppercase;*/
     font-size: 12px;
 }
@@ -268,14 +499,15 @@ img[src*="#centerResized"] {
     position: relative;
     margin-top: 30px;
     margin-bottom: 22px;
+    margin-left: 300px;
+    margin-right: 300px;
     border-radius: 8px;
     border: 2px solid #000000;
     padding: 10px 10px 8px 12px;
     text-decoration: none;
-    
+
     background-color: #0067ac;
     color: #fff;
-    margin-right: 5px;
     text-align: center;
 }
 
@@ -292,6 +524,48 @@ img[src*="#centerResized"] {
     border-radius: 8px;
     /*text-transform: uppercase;*/
     font-size: 12px;
+}
+
+.info {
+    display: block;
+    position: relative;
+    margin-top: 30px;
+    margin-bottom: 22px;
+    margin-left: 300px;
+    margin-right: 300px;
+    border-radius: 8px;
+    border: 2px solid #000000;
+    padding: 10px 10px 8px 12px;
+    text-decoration: none;
+
+    background-color: #ff0000;
+    color: #fff;
+    text-align: center;
+}
+
+.info::before {
+    content: "IMPORTANT";
+    position: absolute;
+    top: -11px;
+    left: 10px;
+    line-height: 20px;
+    padding: 0 3px;
+    background-color: #000;
+    color: #0067ac;
+    font-weight: bold;
+    border-radius: 8px;
+    /*text-transform: uppercase;*/
+    font-size: 12px;
+}
+
+/* MEDIA BASED STYLING */
+
+img[src*="#centerResized"] {
+  display: block;
+  margin: 0 auto;
+  width: 300px;
+  height: auto;
+  margin-bottom: 10px;
 }
 
 img[src*="#centerResizedSlide"] {
@@ -334,6 +608,8 @@ img[src*="#center"] {
     }
 }
 
+/* CODE BASED STYLING */
+
 code {
     font-family: "Code", monospace;
 }
@@ -353,10 +629,6 @@ p code {
   border-radius: 12px;
 }
 
-
-
-
-
 /**
  *  Example CSS file that can be used to style Splash HTML output
  *  Copyright (c) John Sundell 2018
@@ -364,13 +636,17 @@ p code {
  */
 
 pre {
+    white-space: pre-wrap;
     margin-bottom: 1.5em;
+    margin-right: 300px;
     background-color: #1a1a1a;
-    padding: 16px 0;
+    padding: 16px 300px 0px 300px;
     border-radius: 16px;
     border-color: #ffffff;
     border-width: 2.5em;
     border: 2px solid #0267C1;
+    /*padding: 16px 200px 0px 200px;*/
+
 }
 
 pre code {
@@ -383,26 +659,11 @@ pre code {
     font-size: 0.95em;
     overflow-x: auto;
     white-space: pre;
+    /*padding: 15px 200px 0px 200px;*/
     -webkit-overflow-scrolling: touch;
-}
-/*
-pre {
-    margin-top: 20px;
+
 }
 
-pre code {
-    display: block;
-    background-color: #1a1a1a;
-    padding: 15px 20px;
-    border-radius: 12px;
-    color: #a9bcbc;
-    line-height: 1.0em;
-    font-size: 0.9em;
-    overflow-x: auto;
-    white-space: pre;
-    -webkit-overflow-scrolling: touch;
-}
-*/
 pre code .keyword {
     color: #e73289;
 }
@@ -475,28 +736,3 @@ pre code .preprocessing {
 .code-preview a:hover img {
     display: block;
 }
-
-/*.code-preview a {*/
-/*    right: -10px;*/
-/*}*/
-/**/
-/*.code-preview img {*/
-/*    max-width: 159px;*/
-/*}*/
-
-/*
-code::before {
-    content: "Preview!!";
-    position: absolute;
-    /*top: -11px;*/
-    /*left: 10px;
-    line-height: 20px;
-    padding: 0 3px;
-    background-color: #000;
-    color: #0067ac;
-    font-weight: bold;
-    border-radius: 8px;*/
-    /*text-transform: uppercase;*/
-    /*font-size: 12px;*/
-}
-*/

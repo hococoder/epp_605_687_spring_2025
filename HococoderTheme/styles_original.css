@@ -1,0 +1,502 @@
+/**
+*  Publish Hococoder theme
+*  Copyright (c) 2020, Josh Steele
+*  MIT license, see LICENSE file for details
+*  This file is a modified version of
+*  Foundation theme included in Publish
+ *  Uses the Source Sans Pro font, Copyright 2010-2018 Adobe, license: https://github.com/adobe-fonts/source-sans-pro/blob/release/LICENSE.md.  *  Uses the Source Code Pro font, Copyright 2010, 2012 Adobe Systems Incorporated, license: https://github.com/adobe-fonts/source-code-pro/blob/master/LICENSE.md. 
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fonts */
+
+@font-face {
+    font-family: "Main";
+    src: url(/fonts/SourceSansPro-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Main";
+    src: url(/fonts/SourceSansPro-Bold.ttf);
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "Code";
+    src: url(/fonts/SourceCodePro-Regular.ttf);
+}
+
+body {
+    background: #fff;
+    color: #000;
+    /*font-family: Helvetica, Arial;*/
+    font-family: "Main";
+    font-size: 1.05em;
+    text-align: center;
+}
+
+.wrapper {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 40px 0px 40px 0px;
+    text-align: left;
+}
+
+header {
+    background-color: #0067ac;
+}
+
+header .wrapper {
+    padding: 32px 16px;
+    text-align: center;
+}
+
+header a {
+    text-decoration: none;
+}
+
+header .site-name {
+  font-size: 3.5em;
+    color: #000;
+    font-weight: bold;
+}
+
+nav {
+    margin-top: 20px;
+}
+
+nav li {
+    display: inline-block;
+    padding: 5px;
+    border-radius: 12px;
+    background-color: #000;
+    color: #fff;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2em;
+    text-align: center;
+}
+
+h2 {
+    margin: 20px 0;
+}
+
+h3 {
+    margin: 20px 0;
+}
+
+p {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    line-height: 1.5em;
+}
+
+a {
+    color: inherit;
+}
+
+.nextModule:link p {
+  color: green;
+  text-align: right;
+}
+
+.download {
+    display: inline-block;
+    background-color: #0067ac;
+    color: #fff;
+    padding: 4px 6px;
+    border-radius: 5px;
+    margin-right: 5px;
+    text-align: center;
+}
+
+
+
+.description {
+    margin-bottom: 40px;
+}
+
+.item-list > li {
+    display: block;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    background-color: #eee;
+}
+
+.item-list h1 {
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.item-list p {
+    margin-bottom: 0;
+}
+
+.tag-list {
+    margin-bottom: 15px;
+}
+
+.tag-list li,
+.tag {
+    display: inline-block;
+    background-color: #000;
+    color: #ddd;
+    padding: 4px 6px;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.tag-list a,
+.tag a {
+    text-decoration: none;
+}
+
+.item-page .tag-list {
+    display: inline-block;
+}
+
+.content {
+    margin-bottom: 40px;
+    line-height: 1.5em;
+}
+
+.browse-all {
+    display: block;
+    margin-bottom: 30px;
+}
+
+.all-tags li {
+    font-size: 1.4em;
+    margin-right: 10px;
+    padding: 6px 10px;
+}
+
+footer {
+    color: #8a8a8a;
+}
+
+ol {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+ol li {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+ul {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+ul li {
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    line-height: 1.5em;
+}
+
+img[src*="#centerResized"] {
+  display: block;
+  margin: 0 auto;
+  width: 300px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.recommendation {
+    display: inline-block;
+    border-radius: 7px;
+    color: #fff;
+    padding: 7px 7px 7px 33px;
+    font-size: 0.9em;
+}
+
+.info {
+  color: #fff;
+}
+
+.info, blockquote p, .sponsorship .content > ul, .services .content > ul {
+    position: relative;
+    background-color: #000;
+    padding: 10px 10px 10px 15px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    border-left: 4px solid #ff644e;
+}
+
+.new {
+    display: block;
+    position: relative;
+    margin-top: 30px;
+    margin-bottom: 22px;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #000;
+    border: 2px solid #0067ac;
+    padding: 10px 10px 8px 12px;
+    text-decoration: none;
+}
+
+.new::before {
+    content: "New This Semester";
+    position: absolute;
+    top: -11px;
+    left: 10px;
+    line-height: 20px;
+    padding: 0 3px;
+    background-color: #000;
+    color: #0067ac;
+    font-weight: bold;
+    /*text-transform: uppercase;*/
+    font-size: 12px;
+}
+
+.suggestedReading {
+    display: block;
+    position: relative;
+    margin-top: 30px;
+    margin-bottom: 22px;
+    border-radius: 8px;
+    border: 2px solid #000000;
+    padding: 10px 10px 8px 12px;
+    text-decoration: none;
+    
+    background-color: #0067ac;
+    color: #fff;
+    margin-right: 5px;
+    text-align: center;
+}
+
+.suggestedReading::before {
+    content: "Suggested Reading";
+    position: absolute;
+    top: -11px;
+    left: 10px;
+    line-height: 20px;
+    padding: 0 3px;
+    background-color: #000;
+    color: #0067ac;
+    font-weight: bold;
+    border-radius: 8px;
+    /*text-transform: uppercase;*/
+    font-size: 12px;
+}
+
+img[src*="#centerResizedSlide"] {
+  display: block;
+/*  margin: 0 auto;*/
+  width: 800px;
+  height: auto;
+  padding: 10px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+img[src*="#center"] {
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #222;
+    }
+
+    body,
+    header .site-name {
+        color: #fff;
+    }
+
+    .item-list > li {
+        background-color: #333;
+    }
+
+    header {
+        background-color: #0067ac;
+    }
+
+    nav li {
+        background-color: #000;
+        color: #fff;
+    }
+}
+
+code {
+    font-family: "Code", monospace;
+}
+
+li code {
+  background-color: #666666;
+  color: #fff;
+  padding: 2px 4px;
+  border-radius: 12px;
+}
+
+p code {
+  background-color: #666666;
+  color: #fff;
+  font-size: 0.9em;
+  padding: 2px 4px;
+  border-radius: 12px;
+}
+
+
+
+
+
+/**
+ *  Example CSS file that can be used to style Splash HTML output
+ *  Copyright (c) John Sundell 2018
+ *  MIT license - see LICENSE.md
+ */
+
+pre {
+    margin-bottom: 1.5em;
+    background-color: #1a1a1a;
+    padding: 16px 0;
+    border-radius: 16px;
+    border-color: #ffffff;
+    border-width: 2.5em;
+    border: 2px solid #0267C1;
+}
+
+pre code {
+    font-family: monospace;
+    display: block;
+    padding: 15px 20px;
+    border-radius: 12px;
+    color: #a9bcbc;
+    line-height: 1.4em;
+    font-size: 0.95em;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+}
+/*
+pre {
+    margin-top: 20px;
+}
+
+pre code {
+    display: block;
+    background-color: #1a1a1a;
+    padding: 15px 20px;
+    border-radius: 12px;
+    color: #a9bcbc;
+    line-height: 1.0em;
+    font-size: 0.9em;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+}
+*/
+pre code .keyword {
+    color: #e73289;
+}
+
+pre code .type {
+    color: #8281ca;
+}
+
+pre code .call {
+    color: #348fe5;
+}
+
+pre code .property {
+    color: #21ab9d;
+}
+
+pre code .number {
+    color: #db6f57;
+}
+
+pre code .string {
+    color: #fa641e;
+}
+
+pre code .comment {
+    color: #6b8a94;
+}
+
+pre code .dotAccess {
+    color: #92b300;
+}
+
+pre code .preprocessing {
+    color: #b68a00;
+}
+
+.code-preview {
+    position: relative;
+    z-index: 1;
+}
+
+
+
+.code-preview a {
+    display: block;
+    font-family: "Main";
+    font-size: 0.8em;
+    position: absolute;
+    top: 5px;
+    right: 12px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #ddd;
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: #000;
+    cursor: default;
+}
+
+.code-preview img {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    max-width: 212px;
+    border: 1px solid #0a0a0a;
+    border-radius: 10px;
+}
+
+.code-preview a:hover img {
+    display: block;
+}
+
+/*.code-preview a {*/
+/*    right: -10px;*/
+/*}*/
+/**/
+/*.code-preview img {*/
+/*    max-width: 159px;*/
+/*}*/
+
+/*
+code::before {
+    content: "Preview!!";
+    position: absolute;
+    /*top: -11px;*/
+    /*left: 10px;
+    line-height: 20px;
+    padding: 0 3px;
+    background-color: #000;
+    color: #0067ac;
+    font-weight: bold;
+    border-radius: 8px;*/
+    /*text-transform: uppercase;*/
+    /*font-size: 12px;*/
+}
+*/
