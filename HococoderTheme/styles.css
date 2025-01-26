@@ -243,7 +243,7 @@ leftSide {
   width: 200px;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1510px) {
   leftSide {
     grid-area: leftSide;
     grid-column-start: 1;
@@ -284,7 +284,7 @@ leftSideEmpty {
   padding-inline-start: 5px;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1510px) {
 
   #floater {
     border-radius: 15px;
@@ -368,7 +368,7 @@ footer {
     height: calc(720 * (100vw - 850px)/1280);
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1510px) {
   #myIframe
   {
       position: relative;
@@ -415,7 +415,7 @@ body .layout .wrapper p {
   padding: 0px 300px 0px 300px;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1510px) {
   body .layout .wrapper p {
     padding: 0px 100px 0px 50px;
   }
@@ -426,7 +426,7 @@ body .layout .wrapper pre {
   margin-left: 300px;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1510px) {
   body .layout .wrapper pre {
     padding: 0px 0px 0px 0px;
     margin-left: 50px;
@@ -438,7 +438,7 @@ body .layout .wrapper pre {
   padding: 0px 300px 0px 300px;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1510px) {
   .wrapper h2 {
     padding: 0px 50px 0px 50px;
   }
