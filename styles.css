@@ -171,6 +171,37 @@ nav li {
   color: #fff;
 }
 
+@media (max-width: 2560px) {
+  .grow1 {
+    flex-grow: 1;
+    text-align: center;
+    margin: 5px;
+    grid-row:1;
+    font-size: 85%;
+    display: inline-block;
+    padding: 5px;
+    border-radius: 12px;
+    background-color: #000;
+    color: #fff;
+  }
+}
+
+@media (max-width: 1510px) {
+  .grow1 {
+    flex-grow: 1;
+    text-align: center;
+    margin: 5px;
+    grid-row:1;
+    font-size: 70%;
+    display: inline-block;
+    padding: 5px;
+    border-radius: 12px;
+    background-color: #000;
+    color: #fff;
+  }
+}
+
+
 .headerlayout {
 //  width: 1920px;
 
@@ -243,6 +274,23 @@ leftSide {
   width: 200px;
 }
 
+@media (max-width: 2560px) {
+  leftSide {
+    grid-area: leftSide;
+    grid-column-start: 1;
+    grid-row-start: 2;
+    font-size: 100%;
+    /*border:3px solid blue;*/
+    padding: 5px;
+    background-color: #0067ac;
+    .weekSection {
+      font-size: 80%;
+      padding-top: 20px;
+    }
+    width: 160px;
+  }
+}
+
 @media (max-width: 1510px) {
   leftSide {
     grid-area: leftSide;
@@ -282,6 +330,23 @@ leftSideEmpty {
   z-index: 100;
   text-align: left;
   padding-inline-start: 5px;
+}
+
+@media (max-width: 2560px) {
+  #floater {
+    border-radius: 15px;
+    background-color: #fff;
+    color: #000;
+    position: fixed;
+    top: 300px;
+    right: 25px;
+    height: 350px;
+    width: 125px;
+    z-index: 100;
+    text-align: left;
+    padding-inline-start: 5px;
+    font-size: 90%;
+  }
 }
 
 @media (max-width: 1510px) {
@@ -368,6 +433,15 @@ footer {
     height: calc(720 * (100vw - 850px)/1280);
 }
 
+@media (max-width: 2560px) {
+  #myIframe
+  {
+      position: relative;
+      width: calc(100vw - 500px);
+      height: calc(720 * (100vw - 500px)/1280);
+  }
+}
+
 @media (max-width: 1510px) {
   #myIframe
   {
@@ -415,6 +489,13 @@ body .layout .wrapper p {
   padding: 0px 300px 0px 300px;
 }
 
+@media (max-width: 2560px) {
+  body .layout .wrapper p {
+    padding: 0px 100px 0px 50px;
+  }
+}
+
+
 @media (max-width: 1510px) {
   body .layout .wrapper p {
     padding: 0px 100px 0px 50px;
@@ -424,6 +505,14 @@ body .layout .wrapper p {
 body .layout .wrapper pre {
   padding: 0px 0px 0px 0px;
   margin-left: 300px;
+}
+
+@media (max-width: 2560px) {
+  body .layout .wrapper pre {
+    padding: 0px 0px 0px 0px;
+    margin-left: 50px;
+    margin-right: 100px;
+  }
 }
 
 @media (max-width: 1510px) {
@@ -438,6 +527,12 @@ body .layout .wrapper pre {
   padding: 0px 300px 0px 300px;
 }
 
+@media (max-width: 2560px) {
+  .wrapper h2 {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
 @media (max-width: 1510px) {
   .wrapper h2 {
     padding: 0px 50px 0px 50px;
@@ -448,32 +543,130 @@ body .layout .wrapper pre {
   padding: 0px 300px 0px 300px;
 }
 
+@media (max-width: 2560px) {
+  .wrapper h3 {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper h3 {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
 .wrapper h4 {
   padding: 0px 300px 0px 300px;
 }
+
+@media (max-width: 2560px) {
+  .wrapper h4 {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper h4 {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
 
 .wrapper ul {
   padding: 0px 300px 0px 300px;
 }
 
+@media (max-width: 2560px) {
+  .wrapper ul {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper ul {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+
 .wrapper ul li {
   padding: 0px 300px 0px 0px;
+}
+
+@media (max-width: 2560px) {
+  .wrapper ul li {
+    padding: 0px 50px 0px 0px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper ul li {
+    padding: 0px 50px 0px 0px;
+  }
 }
 
 .wrapper ul li ul {
   padding: 0px 300px 0px 0px;
 }
 
+@media (max-width: 2560px) {
+  .wrapper ul li ul {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper ul li ul {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
 .wrapper ol {
   padding: 0px 300px 0px 300px;
+}
+
+@media (max-width: 2560px) {
+  .wrapper ol {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper ol {
+    padding: 0px 50px 0px 50px;
+  }
 }
 
 .wrapper ol li {
   padding: 0px 300px 0px 0px;
 }
 
+@media (max-width: 2560px) {
+  .wrapper ol li {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper ol li {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
 .wrapper ol li ul {
   padding: 0px 300px 0px 0px;
+}
+
+@media (max-width: 2560px) {
+  .wrapper ol li ul {
+    padding: 0px 50px 0px 50px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .wrapper ol li ul {
+    padding: 0px 50px 0px 50px;
+  }
 }
 
 
@@ -551,10 +744,46 @@ body .layout .wrapper pre {
     text-align: center;
 }
 
+@media (max-width: 2560px) {
+  .new {
+      display: block;
+      position: relative;
+      margin-top: 30px;
+      margin-bottom: 22px;
+      margin-left: 50px;
+      margin-right: 100px;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #000;
+      border: 2px solid #0067ac;
+      padding: 10px 10px 8px 12px;
+      text-decoration: none;
+      text-align: center;
+  }
+}
+
+@media (max-width: 1510px) {
+  .new {
+      display: block;
+      position: relative;
+      margin-top: 30px;
+      margin-bottom: 22px;
+      margin-left: 50px;
+      margin-right: 100px;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #000;
+      border: 2px solid #0067ac;
+      padding: 10px 10px 8px 12px;
+      text-decoration: none;
+      text-align: center;
+  }
+}
+
 .new::before {
     content: "New This Semester";
     position: absolute;
-    top: -11px;
+    top: -15px;
     left: 10px;
     line-height: 20px;
     padding: 0 3px;
@@ -583,6 +812,44 @@ body .layout .wrapper pre {
     text-align: center;
 }
 
+@media (max-width: 2560px) {
+  .suggestedReading {
+      display: block;
+      position: relative;
+      margin-top: 30px;
+      margin-bottom: 22px;
+      margin-left: 50px;
+      margin-right: 100px;
+      border-radius: 8px;
+      border: 2px solid #000000;
+      padding: 10px 10px 8px 12px;
+      text-decoration: none;
+
+      background-color: #0067ac;
+      color: #fff;
+      text-align: center;
+  }
+}
+
+@media (max-width: 1510px) {
+  .suggestedReading {
+      display: block;
+      position: relative;
+      margin-top: 30px;
+      margin-bottom: 22px;
+      margin-left: 50px;
+      margin-right: 100px;
+      border-radius: 8px;
+      border: 2px solid #000000;
+      padding: 10px 10px 8px 12px;
+      text-decoration: none;
+
+      background-color: #0067ac;
+      color: #fff;
+      text-align: center;
+  }
+}
+
 .suggestedReading::before {
     content: "Suggested Reading";
     position: absolute;
@@ -596,6 +863,40 @@ body .layout .wrapper pre {
     border-radius: 8px;
     /*text-transform: uppercase;*/
     font-size: 12px;
+}
+
+@media (max-width: 2560px) {
+  .suggestedReading::before {
+      content: "Suggested Reading";
+      position: absolute;
+      top: -15px;
+      left: 10px;
+      line-height: 20px;
+      padding: 0 3px;
+      background-color: #000;
+      color: #0067ac;
+      font-weight: bold;
+      border-radius: 8px;
+      /*text-transform: uppercase;*/
+      font-size: 12px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .suggestedReading::before {
+      content: "Suggested Reading";
+      position: absolute;
+      top: -15px;
+      left: 10px;
+      line-height: 20px;
+      padding: 0 3px;
+      background-color: #000;
+      color: #0067ac;
+      font-weight: bold;
+      border-radius: 8px;
+      /*text-transform: uppercase;*/
+      font-size: 12px;
+  }
 }
 
 .info {
@@ -615,6 +916,44 @@ body .layout .wrapper pre {
     text-align: center;
 }
 
+@media (max-width: 2560px) {
+  .info {
+      display: block;
+      position: relative;
+      margin-top: 30px;
+      margin-bottom: 22px;
+      margin-left: 100px;
+      margin-right: 100px;
+      border-radius: 8px;
+      border: 2px solid #000000;
+      padding: 10px 10px 8px 12px;
+      text-decoration: none;
+
+      background-color: #ff0000;
+      color: #fff;
+      text-align: center;
+  }
+}
+
+@media (max-width: 1510px) {
+  .info {
+      display: block;
+      position: relative;
+      margin-top: 30px;
+      margin-bottom: 22px;
+      margin-left: 100px;
+      margin-right: 100px;
+      border-radius: 8px;
+      border: 2px solid #000000;
+      padding: 10px 10px 8px 12px;
+      text-decoration: none;
+
+      background-color: #ff0000;
+      color: #fff;
+      text-align: center;
+  }
+}
+
 .info::before {
     content: "IMPORTANT";
     position: absolute;
@@ -630,6 +969,40 @@ body .layout .wrapper pre {
     font-size: 12px;
 }
 
+@media (max-width: 2560px) {
+  .info::before {
+      content: "IMPORTANT";
+      position: absolute;
+      top: -15px;
+      left: 10px;
+      line-height: 20px;
+      padding: 0 3px;
+      background-color: #000;
+      color: #0067ac;
+      font-weight: bold;
+      border-radius: 8px;
+      /*text-transform: uppercase;*/
+      font-size: 12px;
+  }
+}
+
+@media (max-width: 1510px) {
+  .info::before {
+      content: "IMPORTANT";
+      position: absolute;
+      top: -15px;
+      left: 10px;
+      line-height: 20px;
+      padding: 0 3px;
+      background-color: #000;
+      color: #0067ac;
+      font-weight: bold;
+      border-radius: 8px;
+      /*text-transform: uppercase;*/
+      font-size: 12px;
+  }
+}
+
 /* MEDIA BASED STYLING */
 
 img[src*="#centerResized"] {
@@ -640,6 +1013,26 @@ img[src*="#centerResized"] {
   margin-bottom: 10px;
 }
 
+@media (max-width: 2560px) {
+  img[src*="#centerResized"] {
+    display: block;
+    margin: 0 auto;
+    width: 50px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 1510px) {
+  img[src*="#centerResized"] {
+    display: block;
+    margin: 0 auto;
+    width: 50px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+}
+
 img[src*="#centerResizedSlide"] {
   display: block;
 /*  margin: 0 auto;*/
@@ -648,6 +1041,30 @@ img[src*="#centerResizedSlide"] {
   padding: 10px;
   margin-top: 30px;
   margin-bottom: 10px;
+}
+
+@media (max-width: 2560px) {
+  img[src*="#centerResizedSlide"] {
+    display: block;
+  /*  margin: 0 auto;*/
+    width: 400px;
+    height: auto;
+    padding: 10px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 1510px) {
+  img[src*="#centerResizedSlide"] {
+    display: block;
+  /*  margin: 0 auto;*/
+    width: 400px;
+    height: auto;
+    padding: 10px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
 }
 
 img[src*="#center"] {
